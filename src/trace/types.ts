@@ -52,6 +52,63 @@ export interface CodeOwnershipReceipt {
   testRef: string;
 }
 
+export interface TraceCoachRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface TraceCoachStep {
+  id: string;
+  order: number;
+  stepLabel: string;
+  group?: string;
+  title: string;
+  narrative: string;
+  surfaceId: string;
+  codeBlock: {
+    filePath: string;
+    startLine: number;
+    endLine: number;
+    snippet: string;
+  };
+  uiCapture: {
+    selector: string;
+    rect: TraceCoachRect;
+    screenshotPath: string;
+    alt: string;
+  };
+  diagram: {
+    kind: "mermaid" | "sequence" | "graph";
+    nodeId: string;
+    source: string;
+  };
+}
+
+export interface TraceCoachGraphNode {
+  id: string;
+  label: string;
+  kind: "schema" | "query" | "mutation" | "component" | "effect" | "runtime";
+}
+
+export interface TraceCoachGraphEdge {
+  id: string;
+  from: string;
+  to: string;
+  label: string;
+}
+
+export interface TraceCoachState {
+  mode: "campaign" | "sandbox";
+  activeStepId: string;
+  sourceRepo: string;
+  sourceMode: "live" | "snapshot";
+  steps: TraceCoachStep[];
+  graphNodes: TraceCoachGraphNode[];
+  graphEdges: TraceCoachGraphEdge[];
+}
+
 export interface NodeTraceState {
   generatedAt: string;
   session: {
@@ -65,6 +122,7 @@ export interface NodeTraceState {
   proofs: TraceProof[];
   traces: RuntimeTraceRow[];
   codeOwnership: CodeOwnershipReceipt[];
+  coach?: TraceCoachState;
 }
 
 export interface TraceLensState {

@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "startedAt": "2026-06-17T08:12:06.699Z",
+  "completedAt": "2026-06-17T08:12:06.725Z",
+  "durationMs": 26,
+  "apiKeysRequired": false,
+  "sourceRepo": "HomenShum/noderoom",
+  "sourceRoot": "..",
+  "sourceMode": "live",
+  "databasePath": ".nodetrace/trace-coach.sqlite",
+  "statePath": "public/nodetrace-state.json",
+  "coachSteps": 6,
+  "graphNodes": 6,
+  "graphEdges": 6,
+  "captureModel": "NodeRoom code path + data-noderoom selector + DOMRect + screenshotPath",
+  "onboardingModel": "ordered steps only; no video timestamps stored",
+  "visualModel": "NodeRoom trace-tab look and feel"
+}

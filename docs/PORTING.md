@@ -22,12 +22,18 @@ For a full no-skip Next App Router proof from this repo:
 ```bash
 npm run installer:next:e2e
 npm run agent:scale:smoke
+npm run trace-coach:sqlite
 ```
 
 It creates a throwaway Next target, runs the installer, initializes SQLite,
 runs target smoke, and passes the target's real `next build`.
 `agent:scale:smoke` creates a 125-step QA-agent trace fixture and proves the
 public client state stays bounded and Builder-safe.
+`trace-coach:sqlite` creates a NodeRoom codebase onboarding trace from the
+NodeRoom trace-tab implementation. Use that pattern for another repo by
+replacing the file anchors, stable UI selectors, DOMRects, screenshot paths,
+and Mermaid source with values captured from the target app. Keep the
+walkthrough ordered by step label, not by video timecode.
 
 The installer patches `package.json`, copies the trace UI, creates a Vite demo
 entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
@@ -66,6 +72,8 @@ Write these records from your app runtime:
 | `trace_proofs` | source/evidence cards for business proof |
 | `trace_events` | bounded runtime rows from agents, workers, tools, or schedulers |
 | `trace_code_ownership` | builder-only ownership metadata |
+| `trace_coach_steps` | codebase coach steps with step label, group, code range, UI selector, DOMRect, screenshot path, and diagram source |
+| `trace_coach_graph_nodes` / `trace_coach_graph_edges` | flow graph metadata for the coach panel |
 
 Serve a `NodeTraceState` object to the client. Keep `codeOwnership` empty unless
 the current viewer has server-verified builder access.
@@ -113,6 +121,7 @@ npm run happy-path
 npm run smoke
 npm run builder:smoke
 npm run agent:scale:smoke
+npm run trace-coach:sqlite
 npm run installer:next:e2e
 npm run build
 ```

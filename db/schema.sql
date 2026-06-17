@@ -55,3 +55,41 @@ create table if not exists trace_code_ownership (
   builder_only integer not null default 1,
   created_at text not null
 );
+
+create table if not exists trace_coach_steps (
+  id text primary key,
+  session_id text not null references trace_sessions(id) on delete cascade,
+  surface_id text not null references trace_surfaces(id) on delete cascade,
+  step_order integer not null,
+  step_label text not null,
+  step_group text,
+  title text not null,
+  narrative text not null,
+  code_file_path text not null,
+  code_start_line integer not null,
+  code_end_line integer not null,
+  code_snippet text not null,
+  ui_selector text not null,
+  ui_rect_json text not null,
+  screenshot_path text not null,
+  screenshot_alt text not null,
+  diagram_kind text not null,
+  diagram_node_id text not null,
+  diagram_source text not null,
+  created_at text not null
+);
+
+create table if not exists trace_coach_graph_nodes (
+  id text primary key,
+  session_id text not null references trace_sessions(id) on delete cascade,
+  label text not null,
+  kind text not null
+);
+
+create table if not exists trace_coach_graph_edges (
+  id text primary key,
+  session_id text not null references trace_sessions(id) on delete cascade,
+  from_node_id text not null,
+  to_node_id text not null,
+  label text not null
+);

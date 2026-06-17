@@ -71,6 +71,7 @@ For a no-skip Next proof:
 ```bash
 npm run installer:next:e2e
 npm run agent:scale:smoke
+npm run trace-coach:sqlite
 ```
 
 The installer copies the trace UI, schema, demo entry, init/smoke scripts, and
@@ -80,6 +81,11 @@ build when the target app has a build script. The receipt is:
 ```text
 .nodetrace/setup-receipt.json
 ```
+
+`npm run trace-coach:sqlite` switches the demo state to a NodeRoom codebase
+Trace Coach campaign based on NodeRoom trace-tab files, selectors, DOMRects,
+screenshot paths, and Mermaid flow source. It uses ordered step labels instead
+of video timecodes.
 
 ## 4. Architecture
 
@@ -113,6 +119,7 @@ Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
 Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
+Run npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

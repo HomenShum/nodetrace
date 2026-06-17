@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, Database, FileSearch, GitBranch, KeyRound, ShieldCheck } from "lucide-react";
-import { DEFAULT_SURFACES, TraceLensPanel, TraceLensProvider, type NodeTraceState } from "./trace";
+import { Activity, Code2, Database, FileJson, FileSearch, GitBranch, Image, KeyRound, ListChecks, Map, Network, ShieldCheck } from "lucide-react";
+import { DEFAULT_SURFACES, TraceLensPanel, TraceLensProvider, type NodeTraceState, type TraceCoachState, type TraceCoachStep } from "./trace";
+
+type CoachTab = "overview" | "steps" | "flow" | "raw";
 
 const seedState: NodeTraceState = {
   generatedAt: "loading",
@@ -19,7 +21,14 @@ const seedState: NodeTraceState = {
 
 export function DemoDashboard() {
   const [state, setState] = useState<NodeTraceState>(seedState);
+  const [activeCoachStepId, setActiveCoachStepId] = useState<string | null>(null);
+  const [coachTab, setCoachTab] = useState<CoachTab>("overview");
   const latestTrace = state.traces.at(-1);
+  const coach = state.coach;
+  const activeCoachStep = useMemo(
+    () => coach?.steps.find((step) => step.id === activeCoachStepId) ?? coach?.steps.find((step) => step.id === coach.activeStepId) ?? coach?.steps[0],
+    [activeCoachStepId, coach],
+  );
 
   useEffect(() => {
     fetch("./nodetrace-state.json", { cache: "no-store" })
@@ -116,10 +125,209 @@ export function DemoDashboard() {
               ))}
             </ol>
           </section>
+
+          {coach && activeCoachStep ? (
+            <TraceCoachPanel
+              activeStep={activeCoachStep}
+              activeTab={coachTab}
+              coach={coach}
+              setActiveTab={setCoachTab}
+              setActiveStepId={setActiveCoachStepId}
+            />
+          ) : null}
         </section>
       </main>
 
       <TraceLensPanel state={state} />
     </TraceLensProvider>
   );
+}
+
+function TraceCoachPanel({
+  activeStep,
+  activeTab,
+  coach,
+  setActiveTab,
+  setActiveStepId,
+}: {
+  activeStep: TraceCoachStep;
+  activeTab: CoachTab;
+  coach: TraceCoachState;
+  setActiveTab: (tab: CoachTab) => void;
+  setActiveStepId: (stepId: string) => void;
+}) {
+  const activeNodeId = activeStep.diagram.nodeId;
+  const rect = activeStep.uiCapture.rect;
+  const rectStyle = {
+    left: `${(rect.x / 1080) * 100}%`,
+    top: `${(rect.y / 620) * 100}%`,
+    width: `${(rect.width / 1080) * 100}%`,
+    height: `${(rect.height / 620) * 100}%`,
+  };
+  const tabs: Array<{ id: CoachTab; label: string; Icon: typeof ListChecks }> = [
+    { id: "overview", label: "Overview", Icon: ListChecks },
+    { id: "steps", label: "Steps", Icon: Code2 },
+    { id: "flow", label: "Flow", Icon: Network },
+    { id: "raw", label: "Raw JSON", Icon: FileJson },
+  ];
+  const rawPayload = {
+    sourceRepo: coach.sourceRepo,
+    sourceMode: coach.sourceMode,
+    activeStep,
+    graph: {
+      nodes: coach.graphNodes,
+      edges: coach.graphEdges,
+    },
+  };
+
+  return (
+    <section className="coachPanel r-tracevu" data-nodetrace-surface={activeStep.surfaceId}>
+      <aside className="coachList r-tracevu-list" aria-label="NodeRoom trace records">
+        <div className="coachSource">
+          <span>Source app</span>
+          <strong>NodeRoom trace tabs</strong>
+          <small>
+            {coach.sourceRepo} · {coach.steps.length} steps · {coach.sourceMode}
+          </small>
+        </div>
+        {coach.steps.map((step) => (
+          <button
+            key={step.id}
+            type="button"
+            className="r-tracevu-rec"
+            data-on={String(step.id === activeStep.id)}
+            data-testid="trace-record"
+            onClick={() => {
+              setActiveStepId(step.id);
+              setActiveTab("overview");
+            }}
+          >
+            <span className="r-tracevu-rec-head">
+              <Activity size={13} aria-hidden="true" />
+              <span className="r-tracevu-rec-title">{step.title}</span>
+              <span className="r-tracevu-pill" data-tone="ok">pass</span>
+            </span>
+            <span className="r-tracevu-rec-sub">{step.narrative}</span>
+            <span className="r-tracevu-rec-meta">
+              {step.group ?? "Trace"} · {step.stepLabel} · {step.codeBlock.filePath}
+            </span>
+          </button>
+        ))}
+      </aside>
+
+      <div className="coachDetail r-tracevu-detail">
+        <header className="r-tracevu-detail-head">
+          <strong>{activeStep.title}</strong>
+          <p>{activeStep.narrative}</p>
+          <div className="r-tracevu-tabs" role="tablist" aria-label="NodeRoom trace detail">
+            {tabs.map(({ id, label, Icon }) => (
+              <button key={id} type="button" role="tab" aria-selected={activeTab === id} data-on={String(activeTab === id)} onClick={() => setActiveTab(id)}>
+                <Icon size={12} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="r-tracevu-detail-body">
+          {activeTab === "overview" ? (
+            <div className="coachOverview">
+              <section className="coachPane codePane" aria-label="Code slice">
+                <div className="paneTitle">
+                  <Code2 size={17} aria-hidden="true" />
+                  <span>{activeStep.codeBlock.filePath}</span>
+                </div>
+                <small>
+                  lines {activeStep.codeBlock.startLine}-{activeStep.codeBlock.endLine}
+                </small>
+                <pre>{activeStep.codeBlock.snippet}</pre>
+              </section>
+
+              <section className="coachPane uiPane" aria-label="UI capture">
+                <div className="paneTitle">
+                  <Image size={17} aria-hidden="true" />
+                  <span>{activeStep.uiCapture.selector}</span>
+                </div>
+                <div className="captureFrame">
+                  <div className="captureChrome">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                  <div className="captureBody">
+                    <div className="captureBox" style={rectStyle} />
+                    <p>{activeStep.uiCapture.alt}</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          ) : null}
+
+          {activeTab === "steps" ? (
+            <div className="r-tracevu-groups">
+              {Object.entries(groupCoachSteps(coach.steps)).map(([group, steps]) => (
+                <details key={group} className="r-tracevu-group" open data-testid="trace-group">
+                  <summary>
+                    <span className="r-tracevu-group-name">{group}</span>
+                    <span className="r-tracevu-group-count">{steps.length}</span>
+                  </summary>
+                  <ol className="r-tracevu-steps">
+                    {steps.map((step) => (
+                      <li key={step.id}>
+                        <button type="button" className="r-tracevu-step" data-testid="trace-step" data-tone="ok" onClick={() => setActiveStepId(step.id)}>
+                          <span className="r-tracevu-step-idx">{step.order}</span>
+                          <span className="r-tracevu-step-body">
+                            <span className="r-tracevu-step-label">{step.title}</span>
+                            <span className="r-tracevu-step-detail">{step.narrative}</span>
+                            <span className="r-tracevu-metrics">
+                              <span><b>{step.codeBlock.filePath}</b> code</span>
+                              <span><b>{step.uiCapture.selector}</b> selector</span>
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              ))}
+            </div>
+          ) : null}
+
+          {activeTab === "flow" ? (
+            <section className="coachPane mapPane" aria-label="Trace coach flow">
+              <div className="paneTitle">
+                <Map size={17} aria-hidden="true" />
+                <span>{coach.graphNodes.length} nodes · {coach.graphEdges.length} edges</span>
+              </div>
+              <div className="graphNodes">
+                {coach.graphNodes.map((node) => (
+                  <span key={node.id} className={node.id === activeNodeId ? "active" : ""}>
+                    {node.label}
+                  </span>
+                ))}
+              </div>
+              <ol className="graphEdges" aria-label="Trace graph edges">
+                {coach.graphEdges.map((edge) => (
+                  <li key={edge.id}>{edge.from} {"->"} {edge.to}: {edge.label}</li>
+                ))}
+              </ol>
+              <pre>{activeStep.diagram.source}</pre>
+            </section>
+          ) : null}
+
+          {activeTab === "raw" ? (
+            <pre className="r-tracevu-raw" data-testid="trace-raw">{JSON.stringify(rawPayload, null, 2)}</pre>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function groupCoachSteps(steps: TraceCoachStep[]): Record<string, TraceCoachStep[]> {
+  return steps.reduce<Record<string, TraceCoachStep[]>>((groups, step) => {
+    const group = step.group ?? "Trace";
+    groups[group] = [...(groups[group] ?? []), step];
+    return groups;
+  }, {});
 }

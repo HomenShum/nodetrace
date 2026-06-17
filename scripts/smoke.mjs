@@ -36,10 +36,10 @@ if (issues.length === 0) {
   for (const required of ["Business proof", "Runtime trace", "Code ownership", "Builder", "Review", "Query", "Mutation", "Skill"]) {
     if (!panel.includes(required)) issues.push(`TraceLensPanel missing ${required}`);
   }
-  for (const table of ["trace_sessions", "trace_surfaces", "trace_proofs", "trace_events", "trace_code_ownership"]) {
+  for (const table of ["trace_sessions", "trace_surfaces", "trace_proofs", "trace_events", "trace_code_ownership", "trace_coach_steps", "trace_coach_graph_nodes", "trace_coach_graph_edges"]) {
     if (!schema.includes(table)) issues.push(`schema missing ${table}`);
   }
-  for (const column of ["query_ref", "mutation_ref", "skill_ref"]) {
+  for (const column of ["query_ref", "mutation_ref", "skill_ref", "step_label", "step_group"]) {
     if (!schema.includes(column)) issues.push(`schema missing ${column}`);
   }
   for (const required of [
@@ -54,10 +54,24 @@ if (issues.length === 0) {
     "--framework next",
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
+    "npm run trace-coach:sqlite",
     "125-step QA-agent trace",
+    "examples/trace-coach-sqlite/README.md",
+    "docs/eval/nodetrace-trace-coach-sqlite.png",
+    "NodeRoom codebase Trace Coach",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
+  for (const required of ["NodeRoom trace records", "coachPanel", "captureBox", "r-tracevu-tabs", "stepLabel"]) {
+    const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
+    const styles = readFileSync("src/styles.css", "utf8");
+    if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`coach UI missing ${required}`);
+  }
+  const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
+  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface"]) {
+    if (!coachScript.includes(required)) issues.push(`trace-coach script missing ${required}`);
+  }
+  if (coachScript.includes("timestampLabel")) issues.push("trace-coach script still uses timestampLabel");
   for (const required of [
     "Visual Walkthrough",
     "nodetrace-walkthrough.gif",
@@ -86,6 +100,9 @@ if (issues.length === 0) {
     "docs/AGENT_TRACE_ADOPTION.md",
     "scripts/builder-access-smoke.mjs",
     "scripts/agent-trace-scale-smoke.mjs",
+    "scripts/trace-coach-sqlite.mjs",
+    "examples/trace-coach-sqlite/README.md",
+    "docs/eval/nodetrace-trace-coach-sqlite.png",
   ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);
   }

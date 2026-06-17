@@ -74,6 +74,21 @@ state remains Builder-safe, and confirms the Trace Lens keeps a bounded runtime
 window for the clicked surface. The integration prompt is in
 [`examples/qa-agent/README.md`](examples/qa-agent/README.md).
 
+For a NodeRoom codebase Trace Coach walkthrough:
+
+```bash
+npm run trace-coach:sqlite
+npm run dev
+```
+
+That proof seeds the local sample app from NodeRoom's real trace-tab source
+path. It writes a SQLite-backed campaign where each ordered step contains a
+step label, real NodeRoom file path and line range, UI selector, DOMRect
+bounding box, screenshot path, and Mermaid flow source. See
+[`examples/trace-coach-sqlite/README.md`](examples/trace-coach-sqlite/README.md).
+
+![NodeRoom-style Trace Coach tabs](docs/eval/nodetrace-trace-coach-sqlite.png)
+
 Default `add` behavior:
 
 - copies `src/nodetrace/`
@@ -118,6 +133,7 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `scripts/init-sqlite.mjs`: local database/state initializer.
 - `examples/builder-access/server-route.mjs`: token-gated code ownership route.
 - `examples/qa-agent/README.md`: coding-agent prompt for 100+ step QA traces.
+- `examples/trace-coach-sqlite/README.md`: NodeRoom codebase Trace Coach example.
 - `docs/AGENT_TRACE_ADOPTION.md`: injection checklist for external agent apps.
 - `docs/PORTING.md`: copy/adapt checklist for coding agents.
 

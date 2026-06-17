@@ -8,6 +8,11 @@ export type {
   RuntimeTraceRow,
   SurfaceHit,
   SurfaceMeta,
+  TraceCoachGraphEdge,
+  TraceCoachGraphNode,
+  TraceCoachRect,
+  TraceCoachState,
+  TraceCoachStep,
   TraceLensState,
   TraceProof,
 } from "./types";
