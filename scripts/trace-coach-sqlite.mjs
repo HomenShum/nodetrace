@@ -16,6 +16,10 @@ const statePath = resolve(options.state ?? process.env.NODETRACE_STATE_PATH ?? "
 const reportPath = resolve(options["json-out"] ?? "docs/eval/nodetrace-trace-coach-sqlite.json");
 const captureRoot = resolve(options["capture-root"] ?? process.env.NODETRACE_CAPTURE_ROOT ?? "public/captures");
 const sourceRoot = resolve(options["source-root"] ?? process.env.NODETRACE_SOURCE_ROOT ?? "..");
+const realCaptureManifestPath = resolve(
+  options["real-capture-manifest"] ?? process.env.NODETRACE_REAL_CAPTURE_MANIFEST ?? `${captureRoot}/noderoom-real-capture-manifest.json`,
+);
+const allowGeneratedCaptures = isTruthy(options["allow-generated-captures"] ?? process.env.NODETRACE_ALLOW_GENERATED_CAPTURES);
 const startedAt = new Date();
 const startedMs = performance.now();
 
@@ -313,9 +317,12 @@ const coachSteps = baseCoachSteps.map((step) => ({
   },
 }));
 
+const realCaptureManifest = loadRealCaptureManifest(realCaptureManifestPath, coachSteps, captureRoot, allowGeneratedCaptures);
+if (realCaptureManifest) applyRealCaptureManifest(coachSteps, realCaptureManifest, captureRoot);
+
 const sourceMode = coachSteps.some((step) => step.codeBlock.sourceMode === "snapshot") ? "snapshot" : "live";
 
-const captureGraph = writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode });
+const captureGraph = writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode, realCaptureManifest, allowGeneratedCaptures });
 
 const proofs = coachSteps.map((step) => ({
   id: `${step.id}-proof`,
@@ -470,7 +477,11 @@ const report = {
   knowledgeGraphGenerator: captureGraph.generator,
   knowledgeGraphNodes: Array.isArray(captureGraph.nodes) ? captureGraph.nodes.length : graphNodes.length,
   knowledgeGraphEdges: Array.isArray(captureGraph.edges) ? captureGraph.edges.length : graphEdges.length,
-  captureModel: "NodeRoom code path + generated IDE SVG + generated UI target SVG + data-noderoom selector + DOMRect + screenshotPath",
+  realCaptureManifest: relativePath(realCaptureManifestPath),
+  realCaptureSteps: realCaptureManifest ? realCaptureManifest.steps.length : 0,
+  captureModel: realCaptureManifest
+    ? `${realCaptureManifest.captureModel ?? "actual IDE screenshots + actual running app screenshots"} + data-noderoom selector + DOMRect + screenshotPath`
+    : "explicit generated fallback requested with --allow-generated-captures",
   onboardingModel: "ordered steps only; no video timestamps stored",
   visualModel: "NodeRoom trace-tab look and feel with Understand-Anything-backed minimap",
   captureAssets: coachSteps.length * 3 + 1,
@@ -524,7 +535,11 @@ function parseArgs(args) {
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (!arg.startsWith("--")) continue;
-    const key = arg.slice(2);
+    const [key, inlineValue] = arg.slice(2).split("=", 2);
+    if (inlineValue !== undefined) {
+      parsed[key] = inlineValue;
+      continue;
+    }
     const next = args[index + 1];
     if (!next || next.startsWith("--")) {
       parsed[key] = "true";
@@ -534,6 +549,10 @@ function parseArgs(args) {
     }
   }
   return parsed;
+}
+
+function isTruthy(value) {
+  return ["1", "true", "yes", "on"].includes(String(value ?? "").toLowerCase());
 }
 
 function writeJson(path, value) {
@@ -555,7 +574,76 @@ function folderTreeFor(filePath) {
   return parts.map((part, index) => `${"  ".repeat(index)}${index === 0 ? "" : "- "}${part}`);
 }
 
-function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode }) {
+function loadRealCaptureManifest(path, coachSteps, captureRoot, allowGenerated) {
+  if (!existsSync(path)) {
+    if (allowGenerated) return null;
+    throw new Error(
+      `Real capture manifest missing: ${path}. Run \`npm run capture:noderoom:real\` against the latest NodeRoom checkout, then rerun \`npm run trace-coach:sqlite\`.`,
+    );
+  }
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(path, "utf8"));
+  } catch (error) {
+    throw new Error(`Real capture manifest is not valid JSON: ${path}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  const entries = Array.isArray(manifest.steps) ? manifest.steps : [];
+  const byId = new Map(entries.map((entry) => [entry.id, entry]));
+  const issues = [];
+  for (const step of coachSteps) {
+    const entry = byId.get(step.id);
+    if (!entry) {
+      issues.push(`${step.id}: missing manifest step`);
+      continue;
+    }
+    const sourceKind = String(entry.sourceView?.captureKind ?? "");
+    const uiKind = String(entry.uiCapture?.captureKind ?? "");
+    if (!sourceKind.startsWith("actual-")) issues.push(`${step.id}: sourceView.captureKind must be actual-*`);
+    if (!uiKind.startsWith("actual-")) issues.push(`${step.id}: uiCapture.captureKind must be actual-*`);
+    if (!entry.sourceView?.imagePath) issues.push(`${step.id}: missing sourceView.imagePath`);
+    if (!entry.uiCapture?.screenshotPath) issues.push(`${step.id}: missing uiCapture.screenshotPath`);
+    if (entry.sourceView?.imagePath && !existsSync(resolveCaptureAsset(captureRoot, entry.sourceView.imagePath))) {
+      issues.push(`${step.id}: source capture file missing ${entry.sourceView.imagePath}`);
+    }
+    if (entry.uiCapture?.screenshotPath && !existsSync(resolveCaptureAsset(captureRoot, entry.uiCapture.screenshotPath))) {
+      issues.push(`${step.id}: UI capture file missing ${entry.uiCapture.screenshotPath}`);
+    }
+    const rect = entry.uiCapture?.rect;
+    if (!rect || !Number.isFinite(rect.x) || !Number.isFinite(rect.y) || !Number.isFinite(rect.width) || !Number.isFinite(rect.height) || rect.width <= 0 || rect.height <= 0) {
+      issues.push(`${step.id}: uiCapture.rect must be a measured DOMRect`);
+    }
+  }
+  if (issues.length > 0) {
+    throw new Error(`Real capture manifest is incomplete:\n- ${issues.join("\n- ")}\nRun \`npm run capture:noderoom:real\` and commit the refreshed PNGs + manifest.`);
+  }
+  return { ...manifest, steps: entries };
+}
+
+function applyRealCaptureManifest(coachSteps, manifest) {
+  const byId = new Map(manifest.steps.map((entry) => [entry.id, entry]));
+  for (const step of coachSteps) {
+    const entry = byId.get(step.id);
+    step.sourceView = {
+      ...step.sourceView,
+      imagePath: entry.sourceView.imagePath,
+      captureKind: entry.sourceView.captureKind,
+    };
+    step.uiCapture = {
+      ...step.uiCapture,
+      rect: entry.uiCapture.rect,
+      screenshotPath: entry.uiCapture.screenshotPath,
+      captureKind: entry.uiCapture.captureKind,
+    };
+  }
+}
+
+function resolveCaptureAsset(captureRoot, assetPath) {
+  const normalized = String(assetPath).replaceAll("\\", "/");
+  const relativeAsset = normalized.startsWith("captures/") ? normalized.slice("captures/".length) : normalized;
+  return resolve(captureRoot, relativeAsset);
+}
+
+function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode, realCaptureManifest, allowGeneratedCaptures }) {
   const graphPath = resolve(captureRoot, "noderoom-trace-knowledge-graph.json");
   const fallbackGraph = {
     generator: "nodetrace trace-coach:sqlite",
@@ -579,8 +667,15 @@ function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, s
   const minimapNodes = normalizeGraphNodes(graph.nodes, graphNodes);
   const minimapEdges = normalizeGraphEdges(graph.edges, graphEdges, minimapNodes);
   for (const step of coachSteps) {
-    writeFileSync(resolve(captureRoot, `${step.id}-ide.svg`), renderIdeSvg(step));
-    writeFileSync(resolve(captureRoot, `${step.id}-ui.svg`), renderUiTargetSvg(step));
+    if (!realCaptureManifest && allowGeneratedCaptures) {
+      writeFileSync(resolve(captureRoot, `${step.id}-ide.svg`), renderIdeSvg(step));
+      writeFileSync(resolve(captureRoot, `${step.id}-ui.svg`), renderUiTargetSvg(step));
+    } else {
+      for (const assetPath of [step.sourceView.imagePath, step.uiCapture.screenshotPath]) {
+        const resolved = resolveCaptureAsset(captureRoot, assetPath);
+        if (!existsSync(resolved)) throw new Error(`real capture asset missing: ${resolved}`);
+      }
+    }
     writeFileSync(resolve(captureRoot, `${step.id}-minimap.svg`), renderMinimapSvg(step, minimapNodes, minimapEdges, graph));
   }
   return graph;

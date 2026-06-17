@@ -23,6 +23,7 @@ For a full no-skip Next App Router proof from this repo:
 npm run installer:next:e2e
 npm run agent:scale:smoke
 npm run understand:noderoom
+npm run capture:noderoom:real
 npm run trace-coach:sqlite
 ```
 
@@ -30,13 +31,17 @@ It creates a throwaway Next target, runs the installer, initializes SQLite,
 runs target smoke, and passes the target's real `next build`.
 `agent:scale:smoke` creates a 125-step QA-agent trace fixture and proves the
 public client state stays bounded and Builder-safe.
-`trace-coach:sqlite` creates a NodeRoom codebase onboarding trace from the
-NodeRoom trace-tab implementation. Use that pattern for another repo by
-replacing the file anchors, stable UI selectors, DOMRects, generated IDE/source
-captures, generated UI target captures, minimap graph JSON, and Mermaid source
-with values captured from the target app. Keep the walkthrough ordered by step
-label, not by video timecode. `understand:noderoom` is the repeatable proof for
-the graph step: it runs the installed Understand-Anything deterministic scanner,
+`capture:noderoom:real` starts the latest local NodeRoom checkout, opens actual
+VS Code source slices, opens the running NodeRoom app, measures live DOMRects,
+and writes PNG screenshots plus `public/captures/noderoom-real-capture-manifest.json`.
+`trace-coach:sqlite` creates a NodeRoom codebase onboarding trace from those
+manifest-backed captures and the NodeRoom trace-tab implementation. Use that
+pattern for another repo by replacing the file anchors, stable UI selectors,
+DOMRects, actual IDE captures, actual running-app captures, minimap graph JSON,
+and Mermaid source with values captured from the target app. Keep the
+walkthrough ordered by step label, not by video timecode. `understand:noderoom`
+is the repeatable proof for the graph step: it runs the installed
+Understand-Anything deterministic scanner,
 import-map extractor, and structure extractor. If no local UA install exists,
 it clones the upstream repo into `.nodetrace/understand-anything/`, then writes
 a compact graph plus `docs/eval/nodetrace-understand-anything-noderoom.json`.
@@ -82,10 +87,11 @@ Write these records from your app runtime:
 | `trace_coach_graph_nodes` / `trace_coach_graph_edges` | flow graph metadata for the coach panel |
 
 For visual codebase onboarding, publish `NodeTraceState.coach.steps[*].sourceView`
-for the IDE/source slice and `mapCapture` for a codebase minimap. The bundled
-Trace Coach example writes deterministic SVGs to `public/captures/`; teams can
-run Understand-Anything first and then feed that graph into the same
-`mapCapture.graphPath` contract.
+for the IDE/source slice, `uiCapture.screenshotPath` for the running-app proof,
+and `mapCapture` for a codebase minimap. The bundled Trace Coach example
+requires real PNG captures by default and writes only the minimap as generated
+SVG from the Understand-Anything graph. Teams can run Understand-Anything first
+and then feed that graph into the same `mapCapture.graphPath` contract.
 
 Serve a `NodeTraceState` object to the client. Keep `codeOwnership` empty unless
 the current viewer has server-verified builder access.
@@ -133,6 +139,8 @@ npm run happy-path
 npm run smoke
 npm run builder:smoke
 npm run agent:scale:smoke
+npm run understand:noderoom
+npm run capture:noderoom:real
 npm run trace-coach:sqlite
 npm run installer:next:e2e
 npm run build

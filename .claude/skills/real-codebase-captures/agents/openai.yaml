@@ -1,0 +1,4 @@
+interface:
+  display_name: "Real Codebase Captures"
+  short_description: "Capture real IDE and live app proof."
+  default_prompt: "Use $real-codebase-captures to replace generated proof images with actual IDE and running-app screenshots."

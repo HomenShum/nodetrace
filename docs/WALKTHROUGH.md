@@ -72,6 +72,7 @@ For a no-skip Next proof:
 npm run installer:next:e2e
 npm run agent:scale:smoke
 npm run understand:noderoom
+npm run capture:noderoom:real
 npm run trace-coach:sqlite
 ```
 
@@ -83,11 +84,15 @@ build when the target app has a build script. The receipt is:
 .nodetrace/setup-receipt.json
 ```
 
+`npm run capture:noderoom:real` starts the latest local NodeRoom app, captures
+actual VS Code source slices, measures live `data-noderoom-surface` DOMRects,
+and stores actual running-app screenshots plus
+`public/captures/noderoom-real-capture-manifest.json`.
 `npm run trace-coach:sqlite` switches the demo state to a NodeRoom codebase
-Trace Coach campaign based on NodeRoom trace-tab files, selectors, DOMRects,
-generated IDE/source screenshots, generated UI target screenshots, the
-Understand-Anything-backed minimap graph from `npm run understand:noderoom`,
-and Mermaid source. It uses ordered step labels instead of video timecodes.
+Trace Coach campaign based on that manifest, NodeRoom trace-tab files,
+selectors, DOMRects, the Understand-Anything-backed minimap graph from
+`npm run understand:noderoom`, and Mermaid source. It uses ordered step labels
+instead of video timecodes.
 
 ## 4. Architecture
 
@@ -121,8 +126,9 @@ Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
 Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
-Run npm run understand:noderoom before npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, generated source/UI captures, or minimap graph.
+Run npm run understand:noderoom, npm run capture:noderoom:real, then npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, source/UI captures, or minimap graph.
 Confirm docs/eval/nodetrace-understand-anything-noderoom.json says ok true and public/captures/noderoom-trace-knowledge-graph.json is Understand-Anything-backed.
+Confirm public/captures/noderoom-real-capture-manifest.json points to actual VS Code and running NodeRoom PNG captures, not generated stand-ins.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

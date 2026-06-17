@@ -15,6 +15,7 @@ When changing the NodeRoom Trace Coach sample, also run the full local proof:
 
 ```bash
 npm run understand:noderoom
+npm run capture:noderoom:real
 npm run trace-coach:sqlite
 ```
 
@@ -22,6 +23,10 @@ npm run trace-coach:sqlite
 `docs/eval/nodetrace-understand-anything-noderoom.json` and refresh
 `public/captures/noderoom-trace-knowledge-graph.json` from Understand-Anything
 deterministic scripts, not a hand-modeled graph.
+`capture:noderoom:real` must start the latest local NodeRoom app and wire
+actual VS Code source screenshots plus actual running NodeRoom screenshots into
+`public/captures/noderoom-real-capture-manifest.json`. Do not replace those
+assets with generated IDE recompositions, mocked UI images, or stale captures.
 
 Rules:
 
@@ -33,3 +38,4 @@ Rules:
 - Keep the SQLite schema generic so any app can insert trace sessions, surfaces, proofs, and events.
 - Keep `bin/nodetrace.mjs add` fully automatic: copy files, patch package scripts, install deps, run happy path, run smoke, run build when available, and write `.nodetrace/setup-receipt.json`.
 - Keep Trace Coach instructions coding-agent friendly: explicit commands, expected output files, no hidden API keys, and a visual result a new project can compare against.
+- Keep real capture proof mandatory by default. Only use generated source/UI stand-ins with an explicit `--allow-generated-captures` fallback for local debugging, never for public docs or release proof.

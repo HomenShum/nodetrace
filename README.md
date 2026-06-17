@@ -78,15 +78,19 @@ For a NodeRoom codebase Trace Coach walkthrough:
 
 ```bash
 npm run understand:noderoom
+npm run capture:noderoom:real
 npm run trace-coach:sqlite
 npm run dev
 ```
 
 That proof seeds the local sample app from NodeRoom's real trace-tab source
 path. It writes a SQLite-backed campaign where each ordered step contains a
-step label, real NodeRoom file path and line range, generated IDE/source
-recomposition, UI selector, DOMRect bounding box, generated UI target callout,
-and Mermaid flow source. `npm run understand:noderoom` runs
+step label, real NodeRoom file path and line range, actual VS Code screenshot,
+UI selector, DOMRect bounding box, actual running NodeRoom screenshot, and
+Mermaid flow source. `npm run capture:noderoom:real` starts the latest local
+NodeRoom checkout, writes `public/captures/noderoom-real-capture-manifest.json`,
+and captures real UI pixels before the SQLite seeder runs.
+`npm run understand:noderoom` runs
 Understand-Anything deterministic scripts over the NodeRoom trace files,
 auto-cloning the upstream repo into `.nodetrace/understand-anything/` when no
 local install is present, and writes the codebase minimap to
@@ -97,6 +101,12 @@ local install is present, and writes the codebase minimap to
 ![NodeRoom-style Trace Coach tabs](docs/eval/nodetrace-trace-coach-sqlite.png)
 
 ![NodeRoom Trace Coach minimap](docs/eval/nodetrace-trace-coach-minimap.png)
+
+Reusable coding-agent skill:
+
+- [`.claude/skills/real-codebase-captures/SKILL.md`](.claude/skills/real-codebase-captures/SKILL.md) is the public Claude Code/Codex-style skill for this capture workflow.
+- It tells agents to use actual IDE screenshots, actual running-app screenshots, live DOMRects, and a manifest instead of generated screenshot stand-ins.
+- For Codex, copy the `real-codebase-captures` folder into a Codex skills directory; the bundled `agents/openai.yaml` keeps the skill metadata portable.
 
 Default `add` behavior:
 
@@ -144,7 +154,7 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `examples/builder-access/server-route.mjs`: token-gated code ownership route.
 - `examples/qa-agent/README.md`: coding-agent prompt for 100+ step QA traces.
 - `examples/trace-coach-sqlite/README.md`: NodeRoom codebase Trace Coach example.
-- `public/captures/`: generated IDE, UI target, and minimap SVG evidence assets.
+- `public/captures/`: real VS Code PNGs, real NodeRoom UI PNGs, and minimap evidence assets.
 - `docs/AGENT_TRACE_ADOPTION.md`: injection checklist for external agent apps.
 - `docs/PORTING.md`: copy/adapt checklist for coding agents.
 

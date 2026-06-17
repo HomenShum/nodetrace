@@ -24,11 +24,13 @@ if (issues.length === 0) {
   const provider = readFileSync("src/trace/TraceLensProvider.tsx", "utf8");
   const panel = readFileSync("src/trace/TraceLensPanel.tsx", "utf8");
   const schema = readFileSync("db/schema.sql", "utf8");
+  const pkg = JSON.parse(readFileSync("package.json", "utf8"));
   const readme = readFileSync("README.md", "utf8");
   const walkthrough = readFileSync("docs/WALKTHROUGH.md", "utf8");
   const porting = readFileSync("docs/PORTING.md", "utf8");
   const agentNotes = readFileSync("AGENTS.md", "utf8");
   const coachGraph = JSON.parse(readFileSync("public/captures/noderoom-trace-knowledge-graph.json", "utf8"));
+  const realCaptureManifest = JSON.parse(readFileSync("public/captures/noderoom-real-capture-manifest.json", "utf8"));
   const coachReport = JSON.parse(readFileSync("docs/eval/nodetrace-trace-coach-sqlite.json", "utf8"));
   for (const required of ["surfaces", "proofs", "traces", "builderCapable"]) {
     if (!(required in state)) issues.push(`state missing ${required}`);
@@ -58,6 +60,7 @@ if (issues.length === 0) {
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
     "npm run understand:noderoom",
+    "npm run capture:noderoom:real",
     "npm run trace-coach:sqlite",
     "docs/eval/nodetrace-understand-anything-noderoom.json",
     "125-step QA-agent trace",
@@ -65,10 +68,15 @@ if (issues.length === 0) {
     "docs/eval/nodetrace-trace-coach-sqlite.png",
     "docs/eval/nodetrace-trace-coach-minimap.png",
     "public/captures/noderoom-trace-knowledge-graph.json",
+    "public/captures/noderoom-real-capture-manifest.json",
     "NodeRoom codebase Trace Coach",
+    ".claude/skills/real-codebase-captures/SKILL.md",
+    "actual IDE screenshots",
+    "actual running-app screenshots",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
+  if (!Array.isArray(pkg.files) || !pkg.files.includes(".claude/")) issues.push("package.json files list must include .claude/");
   for (const required of ["NodeRoom trace records", "coachPanel", "evidenceShot", "Minimap", "r-tracevu-tabs", "stepLabel"]) {
     const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
     const styles = readFileSync("src/styles.css", "utf8");
@@ -82,11 +90,11 @@ if (issues.length === 0) {
   for (const required of ["--bg-app: #f5f7fb", "coachPanel", "r-tracevu-tabs"]) {
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`light/readable trace UI missing ${required}`);
   }
-  for (const required of ["npm run understand:noderoom", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph"]) {
+  for (const required of ["npm run understand:noderoom", "npm run capture:noderoom:real", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph", "actual VS Code source screenshots", "actual running NodeRoom screenshots"]) {
     if (!agentNotes.includes(required)) issues.push(`AGENTS.md missing ${required}`);
   }
   const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
-  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-backed", "loadUnderstandAnythingGraph"]) {
+  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "loadRealCaptureManifest", "applyRealCaptureManifest", "allowGeneratedCaptures", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-backed", "loadUnderstandAnythingGraph"]) {
     if (!coachScript.includes(required)) issues.push(`trace-coach script missing ${required}`);
   }
   const understandScript = readFileSync("scripts/understand-anything-noderoom.mjs", "utf8");
@@ -100,6 +108,19 @@ if (issues.length === 0) {
   if (!String(coachReport.knowledgeGraphGenerator ?? "").includes("Understand-Anything")) {
     issues.push("trace coach report is not backed by Understand-Anything output");
   }
+  if (!String(realCaptureManifest.captureModel ?? "").includes("actual VS Code") || !String(realCaptureManifest.captureModel ?? "").includes("actual running NodeRoom")) {
+    issues.push("real capture manifest is not backed by actual VS Code and running NodeRoom captures");
+  }
+  if (!String(coachReport.captureModel ?? "").includes("actual VS Code") || !String(coachReport.captureModel ?? "").includes("actual running NodeRoom")) {
+    issues.push("trace coach report is not backed by actual VS Code and running NodeRoom captures");
+  }
+  if (coachReport.realCaptureSteps !== 6 || !Array.isArray(realCaptureManifest.steps) || realCaptureManifest.steps.length !== 6) {
+    issues.push("trace coach real capture manifest must cover all 6 coach steps");
+  }
+  for (const step of realCaptureManifest.steps ?? []) {
+    if (!String(step.sourceView?.captureKind ?? "").startsWith("actual-")) issues.push(`real capture source is not actual: ${step.id}`);
+    if (!String(step.uiCapture?.captureKind ?? "").startsWith("actual-")) issues.push(`real capture UI is not actual: ${step.id}`);
+  }
   for (const required of [
     "Visual Walkthrough",
     "nodetrace-walkthrough.gif",
@@ -112,11 +133,12 @@ if (issues.length === 0) {
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
     "npm run understand:noderoom",
+    "npm run capture:noderoom:real",
     "setup-receipt.json",
   ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
   }
-  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e", "npm run agent:scale:smoke", "125-step QA-agent trace"]) {
+  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e", "npm run agent:scale:smoke", "npm run capture:noderoom:real", "125-step QA-agent trace"]) {
     if (!porting.includes(required)) issues.push(`docs/PORTING.md missing ${required}`);
   }
   for (const file of [
@@ -132,12 +154,15 @@ if (issues.length === 0) {
     "scripts/understand-anything-noderoom.mjs",
     "scripts/trace-coach-sqlite.mjs",
     "examples/trace-coach-sqlite/README.md",
+    ".claude/skills/real-codebase-captures/SKILL.md",
+    ".claude/skills/real-codebase-captures/agents/openai.yaml",
     "docs/eval/nodetrace-understand-anything-noderoom.json",
     "docs/eval/nodetrace-trace-coach-sqlite.png",
     "docs/eval/nodetrace-trace-coach-minimap.png",
-    "public/captures/coach-step-01-artifact-entry-ide.svg",
-    "public/captures/coach-step-01-artifact-entry-ui.svg",
+    "public/captures/coach-step-01-artifact-entry-ide.png",
+    "public/captures/coach-step-01-artifact-entry-ui.png",
     "public/captures/coach-step-01-artifact-entry-minimap.svg",
+    "public/captures/noderoom-real-capture-manifest.json",
     "public/captures/noderoom-trace-knowledge-graph.json",
   ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);

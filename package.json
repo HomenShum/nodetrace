@@ -27,6 +27,7 @@
     "access": "public"
   },
   "files": [
+    ".claude/",
     "bin/",
     "db/",
     "docs/",
@@ -49,6 +50,7 @@
     "builder:smoke": "node scripts/builder-access-smoke.mjs",
     "agent:scale:smoke": "node scripts/agent-trace-scale-smoke.mjs",
     "understand:noderoom": "node scripts/understand-anything-noderoom.mjs",
+    "capture:noderoom:real": "node scripts/capture-noderoom-real-assets.mjs",
     "trace-coach:sqlite": "node scripts/trace-coach-sqlite.mjs --json-out docs/eval/nodetrace-trace-coach-sqlite.json",
     "installer:next:e2e": "node scripts/installer-next-e2e-smoke.mjs",
     "package:dry-run": "npm pack --dry-run",
@@ -67,6 +69,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.61.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.7"
   }
