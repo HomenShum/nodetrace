@@ -1,5 +1,5 @@
 {
-  "name": "nodetrace",
+  "name": "@homenshum/nodetrace",
   "version": "0.1.0",
   "private": false,
   "type": "module",
@@ -23,13 +23,35 @@
   "engines": {
     "node": ">=20"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "bin/",
+    "db/",
+    "docs/",
+    "examples/",
+    "public/",
+    "scripts/",
+    "src/",
+    "index.html",
+    "vite.config.ts",
+    "tsconfig.json",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "db:init": "node scripts/init-sqlite.mjs",
     "happy-path": "node scripts/init-sqlite.mjs --json-out docs/eval/nodetrace-happy-path.json",
-    "smoke": "node scripts/smoke.mjs && node scripts/cli-smoke.mjs"
+    "builder:smoke": "node scripts/builder-access-smoke.mjs",
+    "installer:next:e2e": "node scripts/installer-next-e2e-smoke.mjs",
+    "package:dry-run": "npm pack --dry-run",
+    "walkthroughs:render": "node scripts/render-walkthrough-media.mjs",
+    "smoke": "node scripts/smoke.mjs && node scripts/cli-smoke.mjs",
+    "prepush": "npm run happy-path && npm run smoke && npm run builder:smoke && npm run installer:next:e2e && npm run build && npm run package:dry-run && npm audit --omit=dev"
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",

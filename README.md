@@ -35,20 +35,37 @@ Open the Vite URL and Cmd/Ctrl-click any tagged surface to open Trace Lens.
 From a React/Vite app:
 
 ```bash
-npx nodetrace add
+npx github:HomenShum/nodetrace add --framework vite
 ```
 
-Before npm publication, the GitHub package works too:
+From a Next.js App Router app:
 
 ```bash
-npx github:HomenShum/nodetrace add
+npx github:HomenShum/nodetrace add --framework next
 ```
+
+The unscoped `nodetrace` npm name is already occupied by an unrelated package.
+When this repo is published to npm, use the scoped package:
+
+```bash
+npx @homenshum/nodetrace add
+```
+
+The repo includes a no-skip Next proof for coding agents:
+
+```bash
+npm run installer:next:e2e
+```
+
+That command creates a throwaway Next App Router target, installs dependencies,
+runs the NodeTrace happy path and target smoke, then runs the target's real
+`next build`. It also verifies Windows BOM-prefixed `package.json` files.
 
 Default `add` behavior:
 
 - copies `src/nodetrace/`
 - creates `src/nodetrace-demo/`
-- creates `nodetrace.html`
+- creates `nodetrace.html` for Vite or `/nodetrace` App Router page for Next
 - copies the SQLite schema and init/smoke scripts
 - patches `package.json` scripts and missing dependencies
 - runs install, no-key happy path, target smoke, and build when available
@@ -60,7 +77,8 @@ Then run:
 npm run nodetrace:dev
 ```
 
-Open `/nodetrace.html` on the Vite URL. No API keys are required.
+Open `/nodetrace.html` for Vite or `/nodetrace` for Next. No API keys are
+required.
 
 ## Visual Walkthrough
 
@@ -85,6 +103,7 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `src/trace/surfaces.ts`: client-safe opaque surface registry helpers.
 - `db/schema.sql`: SQLite schema for sessions, surfaces, proofs, events, and gated ownership.
 - `scripts/init-sqlite.mjs`: local database/state initializer.
+- `examples/builder-access/server-route.mjs`: token-gated code ownership route.
 - `docs/PORTING.md`: copy/adapt checklist for coding agents.
 
 ## Trace Contract
@@ -113,8 +132,8 @@ Use either attribute on clickable surfaces:
 
 ## Port Into Another App
 
-1. Run `npx nodetrace add`.
-2. Open `/nodetrace.html` and confirm the no-key demo works.
+1. Run `npx github:HomenShum/nodetrace add --framework vite` or `--framework next`.
+2. Open `/nodetrace.html` for Vite or `/nodetrace` for Next and confirm the no-key demo works.
 3. Tag your visible surfaces with `data-nodetrace-surface`.
 4. Insert trace rows and proof cards from your app runtime.
 5. Serve `NodeTraceState` to the client from your backend.

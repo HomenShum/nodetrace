@@ -6,19 +6,30 @@ adopting a specific agent runtime.
 ## Autopilot Install
 
 ```bash
-npx nodetrace add
+npx github:HomenShum/nodetrace add --framework vite
+npx github:HomenShum/nodetrace add --framework next
 ```
 
-Before npm publication:
+The unscoped `nodetrace` npm name is already occupied by an unrelated package.
+After this repo is published under its scoped package, use:
 
 ```bash
-npx github:HomenShum/nodetrace add
+npx @homenshum/nodetrace add
 ```
 
+For a full no-skip Next App Router proof from this repo:
+
+```bash
+npm run installer:next:e2e
+```
+
+It creates a throwaway Next target, runs the installer, initializes SQLite,
+runs target smoke, and passes the target's real `next build`.
+
 The installer patches `package.json`, copies the trace UI, creates a Vite demo
-entry at `nodetrace.html`, installs dependencies, runs the no-key happy path,
-runs target smoke, runs build when the target has a build script, and writes
-`.nodetrace/setup-receipt.json`.
+entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
+dependencies, runs the no-key happy path, runs target smoke, runs build when
+the target has a build script, and writes `.nodetrace/setup-receipt.json`.
 
 ## Copy
 
@@ -65,11 +76,33 @@ the current viewer has server-verified builder access.
 - Never let a URL query param, local storage value, or client-only role toggle
   unlock code ownership.
 
+## Builder Access Route
+
+NodeTrace includes a runnable token-gated example route:
+
+```bash
+npm run happy-path
+NODETRACE_BUILDER_TOKEN=replace-with-server-secret node examples/builder-access/server-route.mjs
+```
+
+Query it from trusted server-side code only:
+
+```bash
+curl -H "x-nodetrace-builder-token: $NODETRACE_BUILDER_TOKEN" \
+  "http://127.0.0.1:PORT/api/nodetrace/code-ownership?surfaceId=workSurface.traceStrip"
+```
+
+The route returns code ownership only when the server-side token matches. The
+client should receive only the gated response after your app's auth and policy
+checks pass.
+
 ## Done Criteria
 
 ```bash
 npm run happy-path
 npm run smoke
+npm run builder:smoke
+npm run installer:next:e2e
 npm run build
 ```
 

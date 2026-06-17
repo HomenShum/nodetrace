@@ -56,13 +56,20 @@ Trace Lens should show:
 From a React/Vite app:
 
 ```bash
-npx nodetrace add
+npx github:HomenShum/nodetrace add --framework vite
+npx github:HomenShum/nodetrace add --framework next
 ```
 
-Before npm publication:
+After scoped npm publication:
 
 ```bash
-npx github:HomenShum/nodetrace add
+npx @homenshum/nodetrace add
+```
+
+For a no-skip Next proof:
+
+```bash
+npm run installer:next:e2e
 ```
 
 The installer copies the trace UI, schema, demo entry, init/smoke scripts, and
@@ -78,11 +85,16 @@ build when the target app has a build script. The receipt is:
 ```mermaid
 flowchart LR
   CLI["nodetrace add"] --> Target["target React/Vite app"]
+  CLI --> NextTarget["target Next App Router app"]
   Target --> Schema["db/nodetrace.schema.sql"]
+  NextTarget --> Schema
   Target --> Scripts["scripts/nodetrace-init.mjs + smoke"]
+  NextTarget --> Scripts
   Target --> Components["src/nodetrace"]
+  NextTarget --> Components
   Scripts --> State["public/nodetrace-state.json"]
   State --> Demo["nodetrace.html"]
+  State --> NextDemo["/nodetrace page"]
   Components --> Lens["Trace Lens"]
   Lens --> Review["Review mode"]
   Lens --> Locked["Builder/code ownership locked"]
@@ -91,13 +103,15 @@ flowchart LR
 ## 5. Coding-Agent Integration Prompt
 
 ```text
-Run npx nodetrace add in this app.
+Run npx github:HomenShum/nodetrace add --framework vite or --framework next in this app.
 Keep the no-key happy path green before adding model/provider credentials.
-Open /nodetrace.html and verify Trace Lens.
+Open /nodetrace.html for Vite or /nodetrace for Next and verify Trace Lens.
 Tag product surfaces with data-nodetrace-surface.
 Write app runtime events into sessions, surfaces, proofs, trace events, and gated ownership.
 Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
+Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
+Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 
 ## 6. Done Criteria
@@ -106,6 +120,6 @@ Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 - `npm run nodetrace:happy-path` passes in the target app.
 - `npm run nodetrace:smoke` passes in the target app.
 - Target build passes.
-- `/nodetrace.html` renders a dashboard.
+- `/nodetrace.html` or `/nodetrace` renders a dashboard.
 - Cmd/Ctrl-click opens Trace Lens.
 - Code ownership is not exposed unless `builderCapable` is server verified.

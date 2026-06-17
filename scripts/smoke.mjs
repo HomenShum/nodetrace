@@ -26,6 +26,7 @@ if (issues.length === 0) {
   const schema = readFileSync("db/schema.sql", "utf8");
   const readme = readFileSync("README.md", "utf8");
   const walkthrough = readFileSync("docs/WALKTHROUGH.md", "utf8");
+  const porting = readFileSync("docs/PORTING.md", "utf8");
   for (const required of ["surfaces", "proofs", "traces", "builderCapable"]) {
     if (!(required in state)) issues.push(`state missing ${required}`);
   }
@@ -44,6 +45,10 @@ if (issues.length === 0) {
     "nodetrace-trace-lens.png",
     "nodetrace-walkthrough.gif",
     "nodetrace-walkthrough.mp4",
+    "github:HomenShum/nodetrace",
+    "@homenshum/nodetrace",
+    "--framework next",
+    "npm run installer:next:e2e",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
@@ -53,16 +58,24 @@ if (issues.length === 0) {
     "nodetrace-walkthrough.mp4",
     "nodetrace-dashboard.png",
     "nodetrace-trace-lens.png",
-    "npx nodetrace add",
+    "npx github:HomenShum/nodetrace add",
+    "--framework next",
+    "npx @homenshum/nodetrace add",
+    "npm run installer:next:e2e",
     "setup-receipt.json",
   ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
+  }
+  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e"]) {
+    if (!porting.includes(required)) issues.push(`docs/PORTING.md missing ${required}`);
   }
   for (const file of [
     "docs/screenshots/nodetrace-dashboard.png",
     "docs/screenshots/nodetrace-trace-lens.png",
     "docs/walkthroughs/nodetrace-walkthrough.mp4",
     "docs/walkthroughs/nodetrace-walkthrough.gif",
+    "examples/builder-access/server-route.mjs",
+    "scripts/builder-access-smoke.mjs",
   ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);
   }

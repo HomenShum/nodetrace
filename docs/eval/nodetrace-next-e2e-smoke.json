@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "startedAt": "2026-06-17T04:41:39.253Z",
+  "completedAt": "2026-06-17T04:43:09.562Z",
+  "totalMs": 90309,
+  "apiKeysRequired": false,
+  "framework": "next",
+  "phases": [
+    {
+      "name": "install dependencies",
+      "ok": true,
+      "durationMs": 31551
+    },
+    {
+      "name": "happy path",
+      "ok": true,
+      "durationMs": 1377
+    },
+    {
+      "name": "smoke",
+      "ok": true,
+      "durationMs": 894
+    },
+    {
+      "name": "build",
+      "ok": true,
+      "durationMs": 52225
+    }
+  ],
+  "issues": []
+}

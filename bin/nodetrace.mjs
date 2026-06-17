@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const version = JSON.parse(readFileSync(join(packageRoot, "package.json"), "utf8")).version;
+const version = readJson(join(packageRoot, "package.json")).version;
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
 
@@ -28,6 +28,7 @@ function addNodeTrace(options) {
   const force = Boolean(options.force);
   const shouldInstall = !options.skipInstall;
   const shouldVerify = !options.skipVerify;
+  const framework = options.framework ?? detectFramework(targetDir);
   const startedAtMs = Date.now();
   const phases = [];
 
@@ -49,18 +50,22 @@ function addNodeTrace(options) {
     replacements: [["./trace", "../nodetrace"]],
   });
   copyText(join(packageRoot, "src", "styles.css"), join(targetDir, "src", "nodetrace-demo", "styles.css"), { force });
-  writeText(join(targetDir, "src", "nodetrace-demo", "main.tsx"), demoMain(), { force });
-  writeText(join(targetDir, "nodetrace.html"), demoHtml(), { force });
-  writeText(join(targetDir, "docs", "NODETRACE_INTEGRATION.md"), integrationDoc(), { force });
+  if (framework === "next") {
+    writeText(nextPagePath(targetDir), nextPage(nextPageImport(targetDir)), { force });
+  } else {
+    writeText(join(targetDir, "src", "nodetrace-demo", "main.tsx"), demoMain(), { force });
+    writeText(join(targetDir, "nodetrace.html"), demoHtml(), { force });
+  }
+  writeText(join(targetDir, "docs", "NODETRACE_INTEGRATION.md"), integrationDoc(framework), { force });
   copyText(join(packageRoot, "public", "nodetrace-state.json"), join(targetDir, "public", "nodetrace-state.json"), { force });
-  updatePackageJson(targetDir);
+  updatePackageJson(targetDir, framework);
 
   const packageManager = detectPackageManager(targetDir);
   if (shouldInstall) phases.push(runCommand(targetDir, "install dependencies", packageManager.install));
   if (phases.every((phase) => phase.ok) && shouldVerify) {
     phases.push(runCommand(targetDir, "happy path", packageManager.run("nodetrace:happy-path")));
     if (phases.every((phase) => phase.ok)) phases.push(runCommand(targetDir, "smoke", packageManager.run("nodetrace:smoke")));
-    const pkg = JSON.parse(readFileSync(join(targetDir, "package.json"), "utf8"));
+    const pkg = readJson(join(targetDir, "package.json"));
     if (phases.every((phase) => phase.ok) && pkg.scripts?.build) phases.push(runCommand(targetDir, "build", packageManager.run("build")));
   }
 
@@ -70,6 +75,7 @@ function addNodeTrace(options) {
     completedAt: new Date().toISOString(),
     totalMs: Date.now() - startedAtMs,
     targetDir,
+    framework,
     apiKeysRequired: false,
     files: [
       "src/nodetrace",
@@ -77,13 +83,13 @@ function addNodeTrace(options) {
       "db/nodetrace.schema.sql",
       "scripts/nodetrace-init.mjs",
       "scripts/nodetrace-smoke.mjs",
-      "nodetrace.html",
+      framework === "next" ? formatPath(nextPagePath(targetDir), targetDir) : "nodetrace.html",
       "docs/NODETRACE_INTEGRATION.md",
     ],
     phases,
     nextSteps: [
       "npm run nodetrace:dev",
-      "Open /nodetrace.html",
+      framework === "next" ? "Open /nodetrace" : "Open /nodetrace.html",
       "Copy TraceLensProvider and TraceLensPanel into your app shell when ready.",
     ],
   };
@@ -98,7 +104,9 @@ function addNodeTrace(options) {
   console.log("NodeTrace add: PASS");
   console.log("Next:");
   console.log("  npm run nodetrace:dev");
-  console.log("  open http://127.0.0.1:5173/nodetrace.html or the Vite URL printed by your app");
+  console.log(framework === "next"
+    ? "  open http://127.0.0.1:3000/nodetrace or the Next URL printed by your app"
+    : "  open http://127.0.0.1:5173/nodetrace.html or the Vite URL printed by your app");
 }
 
 function copyDir(sourceDir, targetDir, options) {
@@ -124,12 +132,12 @@ function writeText(targetPath, text, options) {
   writeFileSync(targetPath, text);
 }
 
-function updatePackageJson(targetDir) {
+function updatePackageJson(targetDir, framework) {
   const path = join(targetDir, "package.json");
-  const pkg = JSON.parse(readFileSync(path, "utf8"));
+  const pkg = readJson(path);
   pkg.scripts = {
     ...pkg.scripts,
-    "nodetrace:dev": pkg.scripts?.["nodetrace:dev"] ?? "vite --host 127.0.0.1 --open /nodetrace.html",
+    "nodetrace:dev": pkg.scripts?.["nodetrace:dev"] ?? (framework === "next" ? "next dev" : "vite --host 127.0.0.1 --open /nodetrace.html"),
     "nodetrace:happy-path": "node scripts/nodetrace-init.mjs --json-out docs/eval/nodetrace-happy-path.json",
     "nodetrace:smoke": "node scripts/nodetrace-smoke.mjs",
   };
@@ -145,10 +153,12 @@ function updatePackageJson(targetDir) {
     "@types/node": pkg.devDependencies?.["@types/node"] ?? "^22.10.0",
     "@types/react": pkg.devDependencies?.["@types/react"] ?? "^19.0.0",
     "@types/react-dom": pkg.devDependencies?.["@types/react-dom"] ?? "^19.0.0",
-    "@vitejs/plugin-react": pkg.devDependencies?.["@vitejs/plugin-react"] ?? "^4.3.4",
     typescript: pkg.devDependencies?.typescript ?? "^5.7.2",
-    vite: pkg.devDependencies?.vite ?? "^6.0.7",
   };
+  if (framework !== "next") {
+    pkg.devDependencies["@vitejs/plugin-react"] = pkg.devDependencies?.["@vitejs/plugin-react"] ?? "^4.3.4";
+    pkg.devDependencies.vite = pkg.devDependencies?.vite ?? "^6.0.7";
+  }
   writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
@@ -197,6 +207,7 @@ const result = spawnSync(process.execPath, ["scripts/nodetrace-init.mjs", "--db"
 const issues = [];
 if (result.status !== 0) issues.push(\`happy path failed: \${[result.stdout, result.stderr].join("\\n").slice(-1200)}\`);
 for (const file of [dbPath, statePath, reportPath, "src/nodetrace/TraceLensPanel.tsx", "src/nodetrace/TraceLensProvider.tsx", "db/nodetrace.schema.sql", "nodetrace.html"]) {
+  if (file === "nodetrace.html" && (existsSync("app/nodetrace/page.tsx") || existsSync("src/app/nodetrace/page.tsx"))) continue;
   if (!existsSync(file)) issues.push(\`missing \${file}\`);
 }
 if (issues.length === 0) {
@@ -223,6 +234,18 @@ function writeJson(path, value) {
   const parent = dirname(path);
   if (parent && parent !== "." && !existsSync(parent)) mkdirSync(parent, { recursive: true });
   writeFileSync(path, \`\${JSON.stringify(value, null, 2)}\\n\`);
+}
+`;
+}
+
+function nextPage(importPath) {
+  return `"use client";
+
+import { DemoDashboard } from "${importPath}";
+import "${importPath.replace(/DemoDashboard$/, "styles.css")}";
+
+export default function NodeTracePage() {
+  return <DemoDashboard />;
 }
 `;
 }
@@ -257,7 +280,9 @@ function demoHtml() {
 `;
 }
 
-function integrationDoc() {
+function integrationDoc(framework) {
+  const route = framework === "next" ? "/nodetrace" : "/nodetrace.html";
+  const entry = framework === "next" ? "App Router page at `src/app/nodetrace/page.tsx` or `app/nodetrace/page.tsx`" : "Vite demo entry at `nodetrace.html`";
   return `# NodeTrace Integration
 
 This app was patched by \`nodetrace add\`.
@@ -270,7 +295,7 @@ npm run nodetrace:smoke
 npm run nodetrace:dev
 \`\`\`
 
-Open \`/nodetrace.html\` in the Vite dev server.
+Open \`${route}\` in the dev server.
 
 ## Files Added
 
@@ -279,7 +304,7 @@ Open \`/nodetrace.html\` in the Vite dev server.
 - \`db/nodetrace.schema.sql\`: generic SQLite trace schema.
 - \`scripts/nodetrace-init.mjs\`: local SQLite/state initializer.
 - \`scripts/nodetrace-smoke.mjs\`: target app smoke.
-- \`nodetrace.html\`: Vite demo entry.
+- ${entry}.
 
 ## Wire Into The App
 
@@ -298,6 +323,14 @@ function parseOptions(values) {
       index += 1;
     } else if (value === "--force") {
       parsed.force = true;
+    } else if (value === "--framework") {
+      const framework = values[index + 1];
+      if (framework !== "vite" && framework !== "next") {
+        console.error("--framework must be vite or next");
+        process.exit(1);
+      }
+      parsed.framework = framework;
+      index += 1;
     } else if (value === "--skip-install") {
       parsed.skipInstall = true;
     } else if (value === "--skip-verify") {
@@ -305,6 +338,29 @@ function parseOptions(values) {
     }
   }
   return parsed;
+}
+
+function detectFramework(targetDir) {
+  const pkg = readJson(join(targetDir, "package.json"));
+  const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+  if (deps.next || existsSync(join(targetDir, "next.config.js")) || existsSync(join(targetDir, "next.config.mjs"))) return "next";
+  return "vite";
+}
+
+function readJson(path) {
+  return JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
+}
+
+function nextPagePath(targetDir) {
+  return existsSync(join(targetDir, "src", "app"))
+    ? join(targetDir, "src", "app", "nodetrace", "page.tsx")
+    : join(targetDir, "app", "nodetrace", "page.tsx");
+}
+
+function nextPageImport(targetDir) {
+  return existsSync(join(targetDir, "src", "app"))
+    ? "../../nodetrace-demo/DemoDashboard"
+    : "../../src/nodetrace-demo/DemoDashboard";
 }
 
 function writeJson(path, value) {
@@ -321,8 +377,8 @@ function formatMs(ms) {
   return ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${ms}ms`;
 }
 
-function formatPath(path) {
-  const relativePath = relative(process.cwd(), path);
+function formatPath(path, from = process.cwd()) {
+  const relativePath = relative(from, path);
   return relativePath && !relativePath.startsWith("..") ? relativePath : path;
 }
 
@@ -334,10 +390,11 @@ function printHelp() {
   console.log(`NodeTrace ${version}
 
 Commands:
-  nodetrace add [--target <dir>] [--force] [--skip-install] [--skip-verify]
+  nodetrace add [--target <dir>] [--framework vite|next] [--force] [--skip-install] [--skip-verify]
 
 Default add behavior copies Trace Lens, patches package scripts/dependencies,
 runs install, runs the no-key happy path, runs target smoke, and runs build
-when the target app has a build script.
+when the target app has a build script. Vite targets get nodetrace.html; Next
+targets get an App Router /nodetrace page.
 `);
 }
