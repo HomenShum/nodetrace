@@ -19,3 +19,4 @@ Rules:
 - Builder mode must remain gated by a server-verified `builderCapable` flag.
 - Support `data-nodetrace-surface` and the NodeRoom-compatible `data-noderoom-surface`.
 - Keep the SQLite schema generic so any app can insert trace sessions, surfaces, proofs, and events.
+- Keep `bin/nodetrace.mjs add` fully automatic: copy files, patch package scripts, install deps, run happy path, run smoke, run build when available, and write `.nodetrace/setup-receipt.json`.

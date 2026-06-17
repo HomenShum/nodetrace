@@ -26,6 +26,38 @@ creates:
 
 Open the Vite URL and Cmd/Ctrl-click any tagged surface to open Trace Lens.
 
+## Add To An Existing App
+
+From a React/Vite app:
+
+```bash
+npx nodetrace add
+```
+
+Before npm publication, the GitHub package works too:
+
+```bash
+npx github:HomenShum/nodetrace add
+```
+
+Default `add` behavior:
+
+- copies `src/nodetrace/`
+- creates `src/nodetrace-demo/`
+- creates `nodetrace.html`
+- copies the SQLite schema and init/smoke scripts
+- patches `package.json` scripts and missing dependencies
+- runs install, no-key happy path, target smoke, and build when available
+- writes `.nodetrace/setup-receipt.json`
+
+Then run:
+
+```bash
+npm run nodetrace:dev
+```
+
+Open `/nodetrace.html` on the Vite URL. No API keys are required.
+
 ## What You Get
 
 - `src/trace/TraceLensProvider.tsx`: global Cmd/Ctrl-click resolver.
@@ -62,12 +94,12 @@ Use either attribute on clickable surfaces:
 
 ## Port Into Another App
 
-1. Copy `src/trace`, `db/schema.sql`, and `docs/PORTING.md`.
-2. Tag your visible surfaces with `data-nodetrace-surface`.
-3. Insert trace rows and proof cards from your app runtime.
-4. Serve `NodeTraceState` to the client from your backend.
-5. Keep code ownership behind a privileged server route.
-6. Run the equivalent of `npm run happy-path` in the target repo.
+1. Run `npx nodetrace add`.
+2. Open `/nodetrace.html` and confirm the no-key demo works.
+3. Tag your visible surfaces with `data-nodetrace-surface`.
+4. Insert trace rows and proof cards from your app runtime.
+5. Serve `NodeTraceState` to the client from your backend.
+6. Keep code ownership behind a privileged server route.
 
 NodeTrace provides the setup needed for the UI and database path. It does not
 choose your agent loop, model, tool runtime, queue, auth, or cloud provider.

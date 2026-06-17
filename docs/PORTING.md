@@ -1,7 +1,24 @@
 # Porting NodeTrace
 
-NodeTrace is designed for coding agents to copy into an existing app without
+NodeTrace is designed for coding agents to install into an existing app without
 adopting a specific agent runtime.
+
+## Autopilot Install
+
+```bash
+npx nodetrace add
+```
+
+Before npm publication:
+
+```bash
+npx github:HomenShum/nodetrace add
+```
+
+The installer patches `package.json`, copies the trace UI, creates a Vite demo
+entry at `nodetrace.html`, installs dependencies, runs the no-key happy path,
+runs target smoke, runs build when the target has a build script, and writes
+`.nodetrace/setup-receipt.json`.
 
 ## Copy
 
