@@ -1,8 +1,8 @@
 {
   "ok": true,
-  "startedAt": "2026-06-17T08:12:03.644Z",
-  "completedAt": "2026-06-17T08:12:03.660Z",
-  "durationMs": 16,
+  "startedAt": "2026-06-17T08:39:53.150Z",
+  "completedAt": "2026-06-17T08:39:53.171Z",
+  "durationMs": 21,
   "apiKeysRequired": false,
   "databasePath": ".nodetrace/nodetrace.sqlite",
   "statePath": "public/nodetrace-state.json",

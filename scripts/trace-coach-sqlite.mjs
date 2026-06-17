@@ -352,7 +352,7 @@ const clientState = {
   builderCapable: false,
   surfaces,
   proofs: proofs.map(({ sessionId: _sessionId, createdAt: _createdAt, ...proof }) => proof),
-  traces: traces.map(({ sessionId: _sessionId, ...trace }) => trace),
+  traces: traces.map(({ sessionId: _sessionId, createdAt: _createdAt, ...trace }) => trace),
   codeOwnership: [],
   coach: {
     mode: "campaign",

@@ -56,7 +56,7 @@ export function TraceLensPanel({
                   </div>
                   <p>{proof.detail}</p>
                   <footer>
-                    <span>{proof.sourceLabel} · {Math.round(proof.confidence * 100)}%</span>
+                    <span>{proof.sourceLabel} - {Math.round(proof.confidence * 100)}%</span>
                     {proof.sourceUrl ? (
                       <a href={proof.sourceUrl} target="_blank" rel="noreferrer">
                         Open source <ArrowUpRight size={12} aria-hidden="true" />
@@ -83,7 +83,7 @@ export function TraceLensPanel({
                   <li key={trace.id}>
                     <span>{trace.phase}</span>
                     <strong>{trace.summary}</strong>
-                    <em>{trace.actor} · {trace.durationMs}ms</em>
+                    <em>{trace.actor} - {trace.durationMs}ms</em>
                   </li>
                 ))}
               </ol>

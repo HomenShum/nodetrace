@@ -121,7 +121,7 @@ try {
     builderCapable: false,
     surfaces: [surface],
     proofs: [{ ...proof, sessionId: undefined, createdAt: undefined }].map(({ sessionId: _s, createdAt: _c, ...item }) => item),
-    traces: traces.map(({ sessionId: _sessionId, createdAt, ...trace }) => ({ ...trace, createdAt })),
+    traces: traces.map(({ sessionId: _sessionId, createdAt: _createdAt, ...trace }) => trace),
     codeOwnership: [],
   };
   writeJson(statePath, clientState);

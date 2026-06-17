@@ -216,7 +216,7 @@ const clientState = {
   builderCapable,
   surfaces,
   proofs: proofs.map(({ createdAt: _createdAt, ...proof }) => proof),
-  traces: traces.map(({ createdAt: traceCreatedAt, ...trace }) => ({ ...trace, createdAt: traceCreatedAt })),
+  traces: traces.map(({ createdAt: _createdAt, ...trace }) => trace),
   codeOwnership: builderCapable
     ? codeOwnership.map(({ createdAt: _createdAt, ...owner }) => owner)
     : [],

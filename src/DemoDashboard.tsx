@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, Code2, Database, FileJson, FileSearch, GitBranch, Image, KeyRound, ListChecks, Map, Network, ShieldCheck } from "lucide-react";
+import { Activity, ArrowRight, CheckCircle2, CircleDot, Code2, Database, FileJson, FileSearch, GitBranch, Image, KeyRound, Layers3, ListChecks, Map, Network, Play, Route, ShieldCheck, Terminal } from "lucide-react";
 import { DEFAULT_SURFACES, TraceLensPanel, TraceLensProvider, type NodeTraceState, type TraceCoachState, type TraceCoachStep } from "./trace";
 
 type CoachTab = "overview" | "steps" | "flow" | "raw";
@@ -46,6 +46,14 @@ export function DemoDashboard() {
     ],
     [latestTrace?.phase, state.session.id, state.session.status, state.traces.length],
   );
+  const heroStats = useMemo(
+    () => [
+      { detail: coach?.sourceMode ?? "local", label: "Source repo", value: coach?.sourceRepo ?? "portable" },
+      { detail: "ordered labels", label: "Coach steps", value: String(coach?.steps.length ?? 0) },
+      { detail: "overview, steps, flow, raw", label: "Trace tabs", value: "4" },
+    ],
+    [coach],
+  );
 
   return (
     <TraceLensProvider builderCapable={state.builderCapable}>
@@ -73,16 +81,81 @@ export function DemoDashboard() {
         </aside>
 
         <section className="workspace">
-          <header className="hero" data-nodetrace-surface="shell.statusStrip">
-            <div>
-              <p className="eyebrow">No agent lock-in</p>
-              <h1>Trace Lens for any app</h1>
+          <header className="showcase" data-nodetrace-surface="shell.statusStrip">
+            <div className="showcaseCopy">
+              <p className="eyebrow">
+                <Route size={13} aria-hidden="true" /> NodeRoom codebase trace
+              </p>
+              <h1>Portable trace UI for agent apps.</h1>
               <p>{state.session.summary}</p>
+              <div className="showcaseActions">
+                <div className="command">
+                  <Terminal size={15} aria-hidden="true" />
+                  <code>npm run trace-coach:sqlite</code>
+                </div>
+                <span className="sourcePill">
+                  <CircleDot size={13} aria-hidden="true" /> no API key required
+                </span>
+              </div>
             </div>
-            <div className="command">
-              <code>npm run happy-path && npm run dev</code>
-            </div>
+            <aside className="launchCard" aria-label="Trace Coach launch path">
+              <div className="launchHead">
+                <span>Live sample</span>
+                <strong>{state.session.status}</strong>
+              </div>
+              <div className="launchFlow" aria-label="SQLite to trace UI flow">
+                <span><Database size={14} aria-hidden="true" /> SQLite</span>
+                <ArrowRight size={14} aria-hidden="true" />
+                <span><Layers3 size={14} aria-hidden="true" /> NodeRoom trace</span>
+                <ArrowRight size={14} aria-hidden="true" />
+                <span><Play size={14} aria-hidden="true" /> browser UI</span>
+              </div>
+              <div className="heroStats">
+                {heroStats.map((stat) => (
+                  <div key={stat.label}>
+                    <span>{stat.label}</span>
+                    <strong>{stat.value}</strong>
+                    <small>{stat.detail}</small>
+                  </div>
+                ))}
+              </div>
+              <div className="launchCheck">
+                <CheckCircle2 size={15} aria-hidden="true" />
+                <span>Seeded from real NodeRoom files, selectors, DOMRects, and flow metadata.</span>
+              </div>
+            </aside>
           </header>
+
+          {coach && activeCoachStep ? (
+            <TraceCoachPanel
+              activeStep={activeCoachStep}
+              activeTab={coachTab}
+              coach={coach}
+              setActiveTab={setCoachTab}
+              setActiveStepId={setActiveCoachStepId}
+            />
+          ) : null}
+
+          <section className="surfaceBand" aria-label="Inspectable surfaces">
+            <div className="surfaceBandHead">
+              <p className="eyebrow">Inspectable surfaces</p>
+              <h2>Every card below is part of the trace contract.</h2>
+            </div>
+            <div className="surfaceGrid">
+              {state.surfaces.map((surface) => (
+                <article
+                  key={surface.id}
+                  className="surface"
+                  data-nodetrace-surface={surface.id}
+                  data-artifact-id={surface.id === "workSurface.evidenceCarousel" ? "seed-artifact" : undefined}
+                >
+                  <span>{surface.proofAvailable ? "proof" : "context"}</span>
+                  <h2>{surface.label}</h2>
+                  <p>{surface.about}</p>
+                </article>
+              ))}
+            </div>
+          </section>
 
           <section className="statusGrid" aria-label="Happy path status">
             {statusCards.map(({ detail, Icon, label, value }) => (
@@ -91,21 +164,6 @@ export function DemoDashboard() {
                 <span>{label}</span>
                 <strong>{value}</strong>
                 <small>{detail}</small>
-              </article>
-            ))}
-          </section>
-
-          <section className="surfaceGrid" aria-label="Inspectable surfaces">
-            {state.surfaces.map((surface) => (
-              <article
-                key={surface.id}
-                className="surface"
-                data-nodetrace-surface={surface.id}
-                data-artifact-id={surface.id === "workSurface.evidenceCarousel" ? "seed-artifact" : undefined}
-              >
-                <span>{surface.proofAvailable ? "proof" : "context"}</span>
-                <h2>{surface.label}</h2>
-                <p>{surface.about}</p>
               </article>
             ))}
           </section>
@@ -120,21 +178,12 @@ export function DemoDashboard() {
                 <li key={trace.id} data-element-id={trace.id}>
                   <span>{trace.phase}</span>
                   <strong>{trace.summary}</strong>
-                  <em>{trace.actor} · {trace.durationMs}ms</em>
+                  <em>{trace.actor} - {trace.durationMs}ms</em>
                 </li>
               ))}
             </ol>
           </section>
 
-          {coach && activeCoachStep ? (
-            <TraceCoachPanel
-              activeStep={activeCoachStep}
-              activeTab={coachTab}
-              coach={coach}
-              setActiveTab={setCoachTab}
-              setActiveStepId={setActiveCoachStepId}
-            />
-          ) : null}
         </section>
       </main>
 
@@ -187,7 +236,7 @@ function TraceCoachPanel({
           <span>Source app</span>
           <strong>NodeRoom trace tabs</strong>
           <small>
-            {coach.sourceRepo} · {coach.steps.length} steps · {coach.sourceMode}
+            {coach.sourceRepo} - {coach.steps.length} steps - {coach.sourceMode}
           </small>
         </div>
         {coach.steps.map((step) => (
@@ -209,7 +258,7 @@ function TraceCoachPanel({
             </span>
             <span className="r-tracevu-rec-sub">{step.narrative}</span>
             <span className="r-tracevu-rec-meta">
-              {step.group ?? "Trace"} · {step.stepLabel} · {step.codeBlock.filePath}
+              {step.group ?? "Trace"} - {step.stepLabel} - {step.codeBlock.filePath}
             </span>
           </button>
         ))}
@@ -297,7 +346,7 @@ function TraceCoachPanel({
             <section className="coachPane mapPane" aria-label="Trace coach flow">
               <div className="paneTitle">
                 <Map size={17} aria-hidden="true" />
-                <span>{coach.graphNodes.length} nodes · {coach.graphEdges.length} edges</span>
+                <span>{coach.graphNodes.length} nodes - {coach.graphEdges.length} edges</span>
               </div>
               <div className="graphNodes">
                 {coach.graphNodes.map((node) => (

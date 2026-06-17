@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T08:12:06.723Z",
+  "generatedAt": "2026-06-17T08:39:56.797Z",
   "session": {
     "id": "trace-coach-noderoom-sqlite",
     "title": "Trace Coach: NodeRoom codebase trace",
@@ -129,8 +129,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 01: Open NodeRoom's Trace tab from the artifact shell",
-      "durationMs": 57,
-      "createdAt": "2026-06-17T08:12:07.699Z"
+      "durationMs": 57
     },
     {
       "id": "coach-step-02-detail-tabs-trace",
@@ -141,8 +140,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 02: Use the real NodeRoom trace tabs",
-      "durationMs": 66,
-      "createdAt": "2026-06-17T08:12:08.699Z"
+      "durationMs": 66
     },
     {
       "id": "coach-step-03-trace-data-trace",
@@ -153,8 +151,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 03: Seed the app from NodeRoom TraceRecord data",
-      "durationMs": 75,
-      "createdAt": "2026-06-17T08:12:09.699Z"
+      "durationMs": 75
     },
     {
       "id": "coach-step-04-step-row-trace",
@@ -165,8 +162,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 04: Render code and UI evidence like NodeRoom step rows",
-      "durationMs": 84,
-      "createdAt": "2026-06-17T08:12:10.699Z"
+      "durationMs": 84
     },
     {
       "id": "coach-step-05-flow-trace",
@@ -177,8 +173,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 05: Keep the latest flow tab behavior",
-      "durationMs": 93,
-      "createdAt": "2026-06-17T08:12:11.699Z"
+      "durationMs": 93
     },
     {
       "id": "coach-step-06-style-trace",
@@ -189,8 +184,7 @@
       "actor": "trace-coach",
       "status": "ok",
       "summary": "Step 06: Match NodeRoom's dark trace surface",
-      "durationMs": 102,
-      "createdAt": "2026-06-17T08:12:12.699Z"
+      "durationMs": 102
     }
   ],
   "codeOwnership": [],

@@ -37,7 +37,7 @@ export interface RuntimeTraceRow {
   status: "ok" | "running" | "blocked" | "error" | "ready";
   summary: string;
   durationMs: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface CodeOwnershipReceipt {
