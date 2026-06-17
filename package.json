@@ -1,0 +1,45 @@
+{
+  "name": "nodetrace",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "description": "Portable Trace Lens UI and SQLite setup for agent-native apps.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HomenShum/nodetrace.git"
+  },
+  "keywords": [
+    "agent",
+    "trace",
+    "trace-lens",
+    "sqlite",
+    "react",
+    "coding-agent"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "db:init": "node scripts/init-sqlite.mjs",
+    "happy-path": "node scripts/init-sqlite.mjs --json-out docs/eval/nodetrace-happy-path.json",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "lucide-react": "^0.515.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
