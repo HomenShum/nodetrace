@@ -255,170 +255,6 @@ button {
   line-height: 1.35;
 }
 
-.statusGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin: 14px 0 0;
-}
-
-.stat,
-.tracePreview {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--bg-primary);
-}
-
-.stat {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 5px 9px;
-  padding: 12px;
-}
-
-.stat span,
-.stat small,
-.tracePreview em {
-  color: var(--text-muted);
-  font-size: 11.5px;
-}
-
-.stat strong {
-  grid-column: 1 / -1;
-  color: var(--text-primary);
-  font-size: 19px;
-}
-
-.stat small {
-  grid-column: 1 / -1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tracePreview {
-  margin-top: 16px;
-  padding: 16px;
-  box-shadow: 0 12px 36px rgba(40, 54, 76, 0.08);
-}
-
-.tracePreviewHead {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 12px;
-}
-
-.tracePreviewHead h2 {
-  margin: 3px 0 4px;
-  color: var(--text-primary);
-  font-size: 19px;
-  letter-spacing: 0;
-}
-
-.tracePreviewHead p:not(.eyebrow) {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.tracePreviewHead > span {
-  flex: none;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 5px 10px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.traceTimeline {
-  display: grid;
-  gap: 8px;
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.traceTimeline li {
-  display: grid;
-  grid-template-columns: minmax(108px, 0.18fr) minmax(0, 1fr) minmax(96px, auto);
-  gap: 14px;
-  align-items: start;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--accent-primary);
-  border-radius: 12px;
-  padding: 11px 12px;
-  background: var(--bg-secondary);
-}
-
-.traceTimeline li[data-status="ok"] {
-  border-left-color: var(--success-ink);
-}
-
-.tracePhase {
-  display: inline-flex;
-  width: fit-content;
-  border-radius: 999px;
-  padding: 4px 8px;
-  background: var(--bg-primary);
-  color: var(--accent-ink);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.traceBody {
-  display: grid;
-  min-width: 0;
-  gap: 3px;
-}
-
-.traceBody strong {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-primary);
-  font-size: 13.5px;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.traceBody small {
-  overflow: hidden;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.traceMeta {
-  display: grid;
-  justify-items: end;
-  gap: 2px;
-  color: var(--text-muted);
-  font-size: 11px;
-}
-
-.traceMeta b,
-.traceMeta em {
-  font-style: normal;
-}
-
-.traceMeta b {
-  color: var(--text-secondary);
-}
-
-.traceMeta em {
-  font-style: normal;
-  font-family: var(--font-mono);
-}
-
 .coachPanel {
   display: grid;
   grid-template-columns: minmax(286px, 340px) minmax(0, 1fr);
@@ -912,7 +748,6 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .statusGrid,
   .coachOverview {
     grid-template-columns: 1fr;
   }
@@ -943,10 +778,6 @@ button {
   }
 
   .heroStats {
-    grid-template-columns: 1fr;
-  }
-
-  .traceTimeline li {
     grid-template-columns: 1fr;
   }
 

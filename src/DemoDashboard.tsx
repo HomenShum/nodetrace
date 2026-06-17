@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, ArrowRight, CheckCircle2, CircleDot, Code2, Database, FileJson, Image, KeyRound, Layers3, ListChecks, Map, Network, Play, Route, ShieldCheck, Terminal } from "lucide-react";
+import { Activity, ArrowRight, CheckCircle2, CircleDot, Code2, Database, FileJson, Image, Layers3, ListChecks, Map, Network, Play, Route, Terminal } from "lucide-react";
 import { DEFAULT_SURFACES, TraceLensPanel, TraceLensProvider, type NodeTraceState, type TraceCoachState, type TraceCoachStep } from "./trace";
 
 type CoachTab = "overview" | "steps" | "flow" | "raw";
@@ -23,9 +23,7 @@ export function DemoDashboard() {
   const [state, setState] = useState<NodeTraceState>(seedState);
   const [activeCoachStepId, setActiveCoachStepId] = useState<string | null>(null);
   const [coachTab, setCoachTab] = useState<CoachTab>("overview");
-  const latestTrace = state.traces.at(-1);
   const coach = state.coach;
-  const recentTraceRows = useMemo(() => state.traces.slice(-8).reverse(), [state.traces]);
   const activeCoachStep = useMemo(
     () => coach?.steps.find((step) => step.id === activeCoachStepId) ?? coach?.steps.find((step) => step.id === coach.activeStepId) ?? coach?.steps[0],
     [activeCoachStepId, coach],
@@ -38,15 +36,6 @@ export function DemoDashboard() {
       .catch(() => setState(seedState));
   }, []);
 
-  const statusCards = useMemo(
-    () => [
-      { detail: state.session.id, Icon: ShieldCheck, label: "Session", value: state.session.status },
-      { detail: ".nodetrace/nodetrace.sqlite", Icon: Database, label: "Database", value: "SQLite" },
-      { detail: "no model provider required", Icon: KeyRound, label: "Keys", value: "none" },
-      { detail: latestTrace?.phase ?? "seed", Icon: Activity, label: "Trace rows", value: String(state.traces.length) },
-    ],
-    [latestTrace?.phase, state.session.id, state.session.status, state.traces.length],
-  );
   const heroStats = useMemo(
     () => [
       { detail: coach?.sourceMode ?? "local", label: "Source repo", value: coach?.sourceRepo ?? "portable" },
@@ -117,43 +106,6 @@ export function DemoDashboard() {
               setActiveStepId={setActiveCoachStepId}
             />
           ) : null}
-
-          <section className="tracePreview" data-nodetrace-surface="copilot.agentOperationStream">
-            <header className="tracePreviewHead">
-              <div>
-                <p className="eyebrow">Runtime trace</p>
-                <h2>Recent agent-readable rows</h2>
-                <p>Bounded local rows with phase, actor, duration, and the linked UI surface.</p>
-              </div>
-              <span>{state.traces.length} rows</span>
-            </header>
-            <ol className="traceTimeline">
-              {recentTraceRows.map((trace) => (
-                <li key={trace.id} data-element-id={trace.id} data-status={trace.status}>
-                  <span className="tracePhase">{trace.phase}</span>
-                  <span className="traceBody">
-                    <strong>{trace.summary}</strong>
-                    <small>{trace.surfaceId}{trace.elementId ? ` / ${trace.elementId}` : ""}</small>
-                  </span>
-                  <span className="traceMeta">
-                    <b>{trace.actor}</b>
-                    <em>{trace.durationMs}ms</em>
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          <section className="statusGrid" aria-label="Happy path status">
-            {statusCards.map(({ detail, Icon, label, value }) => (
-              <article key={label} className="stat">
-                <Icon size={18} aria-hidden="true" />
-                <span>{label}</span>
-                <strong>{value}</strong>
-                <small>{detail}</small>
-              </article>
-            ))}
-          </section>
 
         </section>
       </main>

@@ -76,10 +76,10 @@ if (issues.length === 0) {
   }
   const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
   const styles = readFileSync("src/styles.css", "utf8");
-  for (const forbidden of ["Inspectable surfaces", "surfaceBand", "surfaceGrid", "railProof", "className=\"rail\""]) {
+  for (const forbidden of ["Inspectable surfaces", "surfaceBand", "surfaceGrid", "railProof", "className=\"rail\"", "tracePreview", "statusGrid", "Recent agent-readable rows"]) {
     if (dashboard.includes(forbidden) || styles.includes(forbidden)) issues.push(`noninteractive surface grid still present: ${forbidden}`);
   }
-  for (const required of ["--bg-app: #f5f7fb", "traceTimeline", "Recent agent-readable rows"]) {
+  for (const required of ["--bg-app: #f5f7fb", "coachPanel", "r-tracevu-tabs"]) {
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`light/readable trace UI missing ${required}`);
   }
   for (const required of ["npm run understand:noderoom", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph"]) {
