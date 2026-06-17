@@ -77,6 +77,7 @@ window for the clicked surface. The integration prompt is in
 For a NodeRoom codebase Trace Coach walkthrough:
 
 ```bash
+npm run understand:noderoom
 npm run trace-coach:sqlite
 npm run dev
 ```
@@ -85,8 +86,12 @@ That proof seeds the local sample app from NodeRoom's real trace-tab source
 path. It writes a SQLite-backed campaign where each ordered step contains a
 step label, real NodeRoom file path and line range, generated IDE/source
 recomposition, UI selector, DOMRect bounding box, generated UI target callout,
-and Mermaid flow source. It also writes an Understand-Anything-style codebase
-minimap to `public/captures/noderoom-trace-knowledge-graph.json`. See
+and Mermaid flow source. `npm run understand:noderoom` runs
+Understand-Anything deterministic scripts over the NodeRoom trace files,
+auto-cloning the upstream repo into `.nodetrace/understand-anything/` when no
+local install is present, and writes the codebase minimap to
+`public/captures/noderoom-trace-knowledge-graph.json`, with a receipt at
+`docs/eval/nodetrace-understand-anything-noderoom.json`. See
 [`examples/trace-coach-sqlite/README.md`](examples/trace-coach-sqlite/README.md).
 
 ![NodeRoom-style Trace Coach tabs](docs/eval/nodetrace-trace-coach-sqlite.png)
@@ -135,6 +140,7 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `src/trace/surfaces.ts`: client-safe opaque surface registry helpers.
 - `db/schema.sql`: SQLite schema for sessions, surfaces, proofs, events, and gated ownership.
 - `scripts/init-sqlite.mjs`: local database/state initializer.
+- `scripts/understand-anything-noderoom.mjs`: UA-backed NodeRoom trace minimap generator.
 - `examples/builder-access/server-route.mjs`: token-gated code ownership route.
 - `examples/qa-agent/README.md`: coding-agent prompt for 100+ step QA traces.
 - `examples/trace-coach-sqlite/README.md`: NodeRoom codebase Trace Coach example.

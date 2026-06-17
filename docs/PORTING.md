@@ -22,6 +22,7 @@ For a full no-skip Next App Router proof from this repo:
 ```bash
 npm run installer:next:e2e
 npm run agent:scale:smoke
+npm run understand:noderoom
 npm run trace-coach:sqlite
 ```
 
@@ -34,7 +35,11 @@ NodeRoom trace-tab implementation. Use that pattern for another repo by
 replacing the file anchors, stable UI selectors, DOMRects, generated IDE/source
 captures, generated UI target captures, minimap graph JSON, and Mermaid source
 with values captured from the target app. Keep the walkthrough ordered by step
-label, not by video timecode.
+label, not by video timecode. `understand:noderoom` is the repeatable proof for
+the graph step: it runs the installed Understand-Anything deterministic scanner,
+import-map extractor, and structure extractor. If no local UA install exists,
+it clones the upstream repo into `.nodetrace/understand-anything/`, then writes
+a compact graph plus `docs/eval/nodetrace-understand-anything-noderoom.json`.
 
 The installer patches `package.json`, copies the trace UI, creates a Vite demo
 entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
@@ -78,9 +83,9 @@ Write these records from your app runtime:
 
 For visual codebase onboarding, publish `NodeTraceState.coach.steps[*].sourceView`
 for the IDE/source slice and `mapCapture` for a codebase minimap. The bundled
-Trace Coach example writes deterministic SVGs to `public/captures/`; teams that
-run Understand Anything can replace the generated minimap payload with their
-`.understand-anything/knowledge-graph.json` output.
+Trace Coach example writes deterministic SVGs to `public/captures/`; teams can
+run Understand-Anything first and then feed that graph into the same
+`mapCapture.graphPath` contract.
 
 Serve a `NodeTraceState` object to the client. Keep `codeOwnership` empty unless
 the current viewer has server-verified builder access.

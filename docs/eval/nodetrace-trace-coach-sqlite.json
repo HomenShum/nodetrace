@@ -1,8 +1,8 @@
 {
   "ok": true,
-  "startedAt": "2026-06-17T08:55:10.981Z",
-  "completedAt": "2026-06-17T08:55:11.009Z",
-  "durationMs": 28,
+  "startedAt": "2026-06-17T09:37:57.021Z",
+  "completedAt": "2026-06-17T09:37:57.064Z",
+  "durationMs": 43,
   "apiKeysRequired": false,
   "sourceRepo": "HomenShum/noderoom",
   "sourceRoot": "..",
@@ -12,8 +12,11 @@
   "coachSteps": 6,
   "graphNodes": 6,
   "graphEdges": 6,
+  "knowledgeGraphGenerator": "Understand-Anything deterministic scripts via NodeTrace",
+  "knowledgeGraphNodes": 6,
+  "knowledgeGraphEdges": 8,
   "captureModel": "NodeRoom code path + generated IDE SVG + generated UI target SVG + data-noderoom selector + DOMRect + screenshotPath",
   "onboardingModel": "ordered steps only; no video timestamps stored",
-  "visualModel": "NodeRoom trace-tab look and feel with Understand-Anything-style minimap",
+  "visualModel": "NodeRoom trace-tab look and feel with Understand-Anything-backed minimap",
   "captureAssets": 19
 }

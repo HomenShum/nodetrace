@@ -91,6 +91,10 @@ export function DemoDashboard() {
               <div className="showcaseActions">
                 <div className="command">
                   <Terminal size={15} aria-hidden="true" />
+                  <code>npm run understand:noderoom</code>
+                </div>
+                <div className="command">
+                  <Terminal size={15} aria-hidden="true" />
                   <code>npm run trace-coach:sqlite</code>
                 </div>
                 <span className="sourcePill">

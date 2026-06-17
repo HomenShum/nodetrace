@@ -27,6 +27,8 @@ if (issues.length === 0) {
   const readme = readFileSync("README.md", "utf8");
   const walkthrough = readFileSync("docs/WALKTHROUGH.md", "utf8");
   const porting = readFileSync("docs/PORTING.md", "utf8");
+  const coachGraph = JSON.parse(readFileSync("public/captures/noderoom-trace-knowledge-graph.json", "utf8"));
+  const coachReport = JSON.parse(readFileSync("docs/eval/nodetrace-trace-coach-sqlite.json", "utf8"));
   for (const required of ["surfaces", "proofs", "traces", "builderCapable"]) {
     if (!(required in state)) issues.push(`state missing ${required}`);
   }
@@ -54,7 +56,9 @@ if (issues.length === 0) {
     "--framework next",
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
+    "npm run understand:noderoom",
     "npm run trace-coach:sqlite",
+    "docs/eval/nodetrace-understand-anything-noderoom.json",
     "125-step QA-agent trace",
     "examples/trace-coach-sqlite/README.md",
     "docs/eval/nodetrace-trace-coach-sqlite.png",
@@ -70,10 +74,20 @@ if (issues.length === 0) {
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`coach UI missing ${required}`);
   }
   const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
-  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-style"]) {
+  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-backed", "loadUnderstandAnythingGraph"]) {
     if (!coachScript.includes(required)) issues.push(`trace-coach script missing ${required}`);
   }
+  const understandScript = readFileSync("scripts/understand-anything-noderoom.mjs", "utf8");
+  for (const required of ["scan-project.mjs", "extract-import-map.mjs", "extract-structure.mjs", "UNDERSTAND_ANYTHING_PLUGIN_ROOT", "Understand-Anything.git", ".nodetrace/understand-anything", "Understand-Anything deterministic scripts"]) {
+    if (!understandScript.includes(required)) issues.push(`understand-anything script missing ${required}`);
+  }
   if (coachScript.includes("timestampLabel")) issues.push("trace-coach script still uses timestampLabel");
+  if (!String(coachGraph.generator ?? "").includes("Understand-Anything")) {
+    issues.push("trace coach graph is not backed by Understand-Anything output");
+  }
+  if (!String(coachReport.knowledgeGraphGenerator ?? "").includes("Understand-Anything")) {
+    issues.push("trace coach report is not backed by Understand-Anything output");
+  }
   for (const required of [
     "Visual Walkthrough",
     "nodetrace-walkthrough.gif",
@@ -85,6 +99,7 @@ if (issues.length === 0) {
     "npx @homenshum/nodetrace add",
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
+    "npm run understand:noderoom",
     "setup-receipt.json",
   ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
@@ -102,8 +117,10 @@ if (issues.length === 0) {
     "docs/AGENT_TRACE_ADOPTION.md",
     "scripts/builder-access-smoke.mjs",
     "scripts/agent-trace-scale-smoke.mjs",
+    "scripts/understand-anything-noderoom.mjs",
     "scripts/trace-coach-sqlite.mjs",
     "examples/trace-coach-sqlite/README.md",
+    "docs/eval/nodetrace-understand-anything-noderoom.json",
     "docs/eval/nodetrace-trace-coach-sqlite.png",
     "docs/eval/nodetrace-trace-coach-minimap.png",
     "public/captures/coach-step-01-artifact-entry-ide.svg",

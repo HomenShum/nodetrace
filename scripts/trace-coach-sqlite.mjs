@@ -309,13 +309,13 @@ const coachSteps = baseCoachSteps.map((step) => ({
   mapCapture: {
     imagePath: capturePath(`${step.id}-minimap.svg`),
     graphPath: capturePath("noderoom-trace-knowledge-graph.json"),
-    model: "Understand-Anything-style structural minimap",
+    model: "Understand-Anything-backed structural minimap",
   },
 }));
 
 const sourceMode = coachSteps.some((step) => step.codeBlock.sourceMode === "snapshot") ? "snapshot" : "live";
 
-writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode });
+const captureGraph = writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode });
 
 const proofs = coachSteps.map((step) => ({
   id: `${step.id}-proof`,
@@ -467,9 +467,12 @@ const report = {
   coachSteps: coachSteps.length,
   graphNodes: graphNodes.length,
   graphEdges: graphEdges.length,
+  knowledgeGraphGenerator: captureGraph.generator,
+  knowledgeGraphNodes: Array.isArray(captureGraph.nodes) ? captureGraph.nodes.length : graphNodes.length,
+  knowledgeGraphEdges: Array.isArray(captureGraph.edges) ? captureGraph.edges.length : graphEdges.length,
   captureModel: "NodeRoom code path + generated IDE SVG + generated UI target SVG + data-noderoom selector + DOMRect + screenshotPath",
   onboardingModel: "ordered steps only; no video timestamps stored",
-  visualModel: "NodeRoom trace-tab look and feel with Understand-Anything-style minimap",
+  visualModel: "NodeRoom trace-tab look and feel with Understand-Anything-backed minimap",
   captureAssets: coachSteps.length * 3 + 1,
 };
 writeJson(reportPath, report);
@@ -553,12 +556,13 @@ function folderTreeFor(filePath) {
 }
 
 function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode }) {
-  const graph = {
+  const graphPath = resolve(captureRoot, "noderoom-trace-knowledge-graph.json");
+  const fallbackGraph = {
     generator: "nodetrace trace-coach:sqlite",
     sourceRepo: "HomenShum/noderoom",
     sourceMode,
-    model: "Understand-Anything-style codebase minimap",
-    note: "Portable subset of the NodeRoom trace UI graph. Swap this file for .understand-anything/knowledge-graph.json when running the full plugin.",
+    model: "NodeTrace fallback codebase minimap",
+    note: "Portable fallback subset of the NodeRoom trace UI graph. Run npm run understand:noderoom to refresh this file from Understand-Anything deterministic scripts.",
     nodes: graphNodes,
     edges: graphEdges,
     guidedTour: coachSteps.map((step) => ({
@@ -570,12 +574,57 @@ function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, s
       summary: step.title,
     })),
   };
-  writeJson(resolve(captureRoot, "noderoom-trace-knowledge-graph.json"), graph);
+  const graph = loadUnderstandAnythingGraph(graphPath) ?? fallbackGraph;
+  writeJson(graphPath, graph);
+  const minimapNodes = normalizeGraphNodes(graph.nodes, graphNodes);
+  const minimapEdges = normalizeGraphEdges(graph.edges, graphEdges, minimapNodes);
   for (const step of coachSteps) {
     writeFileSync(resolve(captureRoot, `${step.id}-ide.svg`), renderIdeSvg(step));
     writeFileSync(resolve(captureRoot, `${step.id}-ui.svg`), renderUiTargetSvg(step));
-    writeFileSync(resolve(captureRoot, `${step.id}-minimap.svg`), renderMinimapSvg(step, graphNodes, graphEdges));
+    writeFileSync(resolve(captureRoot, `${step.id}-minimap.svg`), renderMinimapSvg(step, minimapNodes, minimapEdges, graph));
   }
+  return graph;
+}
+
+function loadUnderstandAnythingGraph(path) {
+  if (!existsSync(path)) return null;
+  try {
+    const graph = JSON.parse(readFileSync(path, "utf8"));
+    if (String(graph.generator ?? "").includes("Understand-Anything")) return graph;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function normalizeGraphNodes(nodes, fallbackNodes) {
+  const fallbackById = new Map(fallbackNodes.map((node) => [node.id, node]));
+  const sourceNodes = Array.isArray(nodes) && nodes.length > 0 ? nodes : fallbackNodes;
+  return sourceNodes
+    .filter((node) => node && typeof node.id === "string")
+    .map((node, index) => {
+      const fallback = fallbackById.get(node.id);
+      return {
+        ...fallback,
+        ...node,
+        x: typeof node.x === "number" ? node.x : fallback?.x ?? 96 + (index % 4) * 218,
+        y: typeof node.y === "number" ? node.y : fallback?.y ?? 180 + Math.floor(index / 4) * 154,
+      };
+    });
+}
+
+function normalizeGraphEdges(edges, fallbackEdges, nodes) {
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const sourceEdges = Array.isArray(edges) && edges.length > 0 ? edges : fallbackEdges;
+  return sourceEdges
+    .filter((edge) => edge && nodeIds.has(edge.from) && nodeIds.has(edge.to))
+    .map((edge, index) => ({
+      id: edge.id ?? `edge-${index}`,
+      from: edge.from,
+      to: edge.to,
+      label: edge.label ?? "related",
+      source: edge.source,
+    }));
 }
 
 function renderIdeSvg(step) {
@@ -655,7 +704,9 @@ function renderUiTargetSvg(step) {
   `);
 }
 
-function renderMinimapSvg(step, graphNodes, graphEdges) {
+function renderMinimapSvg(step, graphNodes, graphEdges, graph) {
+  const backedByUnderstandAnything = String(graph?.generator ?? "").includes("Understand-Anything");
+  const graphLabel = backedByUnderstandAnything ? "Understand-Anything-backed graph" : "NodeTrace fallback graph";
   const nodeById = new Map(graphNodes.map((node) => [node.id, node]));
   const edges = graphEdges
     .map((edge) => {
@@ -680,7 +731,7 @@ function renderMinimapSvg(step, graphNodes, graphEdges) {
     <rect width="1200" height="720" rx="24" fill="#080a0d"/>
     <rect x="32" y="32" width="1136" height="656" rx="22" fill="#101317" stroke="#2b333d"/>
     <text x="62" y="74" fill="#f2f4f7" font-size="18" font-weight="800">NodeRoom trace knowledge minimap</text>
-    <text x="62" y="98" fill="#99a3ae" font-size="12">Understand-Anything-style graph: layers, files, guided tour node, and current trace focus.</text>
+    <text x="62" y="98" fill="#99a3ae" font-size="12">${escapeXml(graphLabel)}: layers, files, guided tour node, and current trace focus.</text>
     <rect x="60" y="126" width="884" height="492" rx="18" fill="#0d1117" stroke="#252b33"/>
     ${edges}
     ${nodes}
@@ -691,7 +742,7 @@ function renderMinimapSvg(step, graphNodes, graphEdges) {
     <rect x="1000" y="210" width="78" height="86" rx="7" fill="rgba(232,120,85,0.12)" stroke="#e87855"/>
     <text x="992" y="472" fill="#f2f4f7" font-size="12" font-weight="800">Active node</text>
     <text x="992" y="494" fill="#ffb195" font-size="12">${escapeXml(step.diagram.nodeId)}</text>
-    <text x="62" y="654" fill="#7cc7ff" font-size="12">Graph JSON: ${escapeXml(step.mapCapture.graphPath)}. Replace with .understand-anything/knowledge-graph.json after running the full plugin.</text>
+    <text x="62" y="654" fill="#7cc7ff" font-size="12">Graph JSON: ${escapeXml(step.mapCapture.graphPath)}. Refresh with npm run understand:noderoom.</text>
   `);
 }
 

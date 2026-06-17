@@ -27,8 +27,20 @@ The seeded steps point at the NodeRoom trace surface:
 Run:
 
 ```bash
+npm run understand:noderoom
 npm run trace-coach:sqlite
 npm run dev
+```
+
+`npm run understand:noderoom` looks for an installed Understand-Anything plugin
+at `~/.understand-anything/repo/understand-anything-plugin`. If it is missing,
+the script clones the upstream open-source repo into the ignored local cache
+`.nodetrace/understand-anything/`, prepares its package, and runs its
+deterministic scanner, import-map extractor, and structure extractor against
+the NodeRoom trace files. Override discovery when needed:
+
+```bash
+UNDERSTAND_ANYTHING_PLUGIN_ROOT=/path/to/understand-anything-plugin npm run understand:noderoom
 ```
 
 The script writes:
@@ -39,6 +51,7 @@ The script writes:
 - `public/captures/*-ui.svg`
 - `public/captures/*-minimap.svg`
 - `public/captures/noderoom-trace-knowledge-graph.json`
+- `docs/eval/nodetrace-understand-anything-noderoom.json`
 - `docs/eval/nodetrace-trace-coach-sqlite.json`
 
 The demo dashboard then renders a NodeRoom-style Trace Coach surface with:
@@ -50,7 +63,7 @@ The demo dashboard then renders a NodeRoom-style Trace Coach surface with:
 - IDE/source recompositions with the accurate folder path and highlighted code section
 - UI target callout images with `data-noderoom-*` selectors, DOMRect, screenshot path, and bounding box
 - Mermaid flow source for the active step
-- an Understand-Anything-style minimap backed by `noderoom-trace-knowledge-graph.json`
+- an Understand-Anything-backed minimap from `noderoom-trace-knowledge-graph.json`
 
 ## Visual Proof
 
@@ -72,7 +85,7 @@ NodeRoom source path + line range
 generated IDE/source screenshot
 NodeRoom UI selector + DOMRect
 generated UI target screenshot
-Understand-Anything-style graph JSON and minimap screenshot
+Understand-Anything graph JSON and minimap screenshot
 Mermaid source for the active minimap tab
 ```
 
@@ -92,7 +105,8 @@ endLine, snippet, uiCapture.selector, uiCapture.rect, uiCapture.screenshotPath,
 sourceView.imagePath, mapCapture.imagePath, mapCapture.graphPath, and
 diagram.source. Generate or capture visual assets for the IDE/source slice, UI
 target callout, and minimap. Keep the first pass local and SQLite-backed. Run
-npm run trace-coach:sqlite, npm run smoke, and npm run build.
+npm run understand:noderoom, npm run trace-coach:sqlite, npm run smoke, and
+npm run build.
 ```
 
 ## Adapting To Another Codebase

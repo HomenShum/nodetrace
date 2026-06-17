@@ -71,6 +71,7 @@ For a no-skip Next proof:
 ```bash
 npm run installer:next:e2e
 npm run agent:scale:smoke
+npm run understand:noderoom
 npm run trace-coach:sqlite
 ```
 
@@ -84,9 +85,9 @@ build when the target app has a build script. The receipt is:
 
 `npm run trace-coach:sqlite` switches the demo state to a NodeRoom codebase
 Trace Coach campaign based on NodeRoom trace-tab files, selectors, DOMRects,
-generated IDE/source screenshots, generated UI target screenshots, an
-Understand-Anything-style minimap graph, and Mermaid source. It uses ordered
-step labels instead of video timecodes.
+generated IDE/source screenshots, generated UI target screenshots, the
+Understand-Anything-backed minimap graph from `npm run understand:noderoom`,
+and Mermaid source. It uses ordered step labels instead of video timecodes.
 
 ## 4. Architecture
 
