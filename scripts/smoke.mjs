@@ -38,13 +38,32 @@ if (issues.length === 0) {
   for (const table of ["trace_sessions", "trace_surfaces", "trace_proofs", "trace_events", "trace_code_ownership"]) {
     if (!schema.includes(table)) issues.push(`schema missing ${table}`);
   }
-  for (const required of ["docs/WALKTHROUGH.md", "nodetrace-dashboard.png", "nodetrace-trace-lens.png"]) {
+  for (const required of [
+    "docs/WALKTHROUGH.md",
+    "nodetrace-dashboard.png",
+    "nodetrace-trace-lens.png",
+    "nodetrace-walkthrough.gif",
+    "nodetrace-walkthrough.mp4",
+  ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
-  for (const required of ["Visual Walkthrough", "nodetrace-dashboard.png", "nodetrace-trace-lens.png", "npx nodetrace add", "setup-receipt.json"]) {
+  for (const required of [
+    "Visual Walkthrough",
+    "nodetrace-walkthrough.gif",
+    "nodetrace-walkthrough.mp4",
+    "nodetrace-dashboard.png",
+    "nodetrace-trace-lens.png",
+    "npx nodetrace add",
+    "setup-receipt.json",
+  ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
   }
-  for (const file of ["docs/screenshots/nodetrace-dashboard.png", "docs/screenshots/nodetrace-trace-lens.png"]) {
+  for (const file of [
+    "docs/screenshots/nodetrace-dashboard.png",
+    "docs/screenshots/nodetrace-trace-lens.png",
+    "docs/walkthroughs/nodetrace-walkthrough.mp4",
+    "docs/walkthroughs/nodetrace-walkthrough.gif",
+  ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);
   }
 }

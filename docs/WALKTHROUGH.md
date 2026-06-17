@@ -3,6 +3,15 @@
 NodeTrace is a portable trace layer for agent-native apps. This walkthrough
 shows both the standalone demo and the expected target-app install flow.
 
+## MP4/GIF Walkthrough
+
+![NodeTrace walkthrough](walkthroughs/nodetrace-walkthrough.gif)
+
+MP4 version: [nodetrace-walkthrough.mp4](walkthroughs/nodetrace-walkthrough.mp4)
+
+The clip covers onboarding, the target-app installer process, the finished
+local dashboard, and the Trace Lens overlay.
+
 ## 1. Run The Standalone Happy Path
 
 ```bash

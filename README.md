@@ -66,6 +66,13 @@ Open `/nodetrace.html` on the Vite URL. No API keys are required.
 
 The full screenshot walkthrough is in [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md).
 
+![NodeTrace MP4/GIF walkthrough](docs/walkthroughs/nodetrace-walkthrough.gif)
+
+MP4 version: [`docs/walkthroughs/nodetrace-walkthrough.mp4`](docs/walkthroughs/nodetrace-walkthrough.mp4)
+
+The walkthrough shows onboarding, the installer process, the finished no-key
+demo dashboard, and the Trace Lens overlay.
+
 Cmd/Ctrl-click any tagged surface to open Trace Lens:
 
 ![NodeTrace Trace Lens overlay](docs/screenshots/nodetrace-trace-lens.png)
