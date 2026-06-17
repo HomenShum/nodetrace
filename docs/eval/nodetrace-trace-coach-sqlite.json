@@ -1,8 +1,8 @@
 {
   "ok": true,
-  "startedAt": "2026-06-17T18:34:48.818Z",
-  "completedAt": "2026-06-17T18:34:48.898Z",
-  "durationMs": 80,
+  "startedAt": "2026-06-17T20:32:28.152Z",
+  "completedAt": "2026-06-17T20:32:28.219Z",
+  "durationMs": 67,
   "apiKeysRequired": false,
   "sourceRepo": "HomenShum/noderoom",
   "sourceRoot": "..",
@@ -17,7 +17,7 @@
   "knowledgeGraphEdges": 8,
   "realCaptureManifest": "public/captures/noderoom-real-capture-manifest.json",
   "realCaptureSteps": 6,
-  "captureModel": "actual VS Code desktop screenshots + actual running NodeRoom Playwright screenshots + data-noderoom selector + DOMRect + screenshotPath",
+  "captureModel": "actual code-browser source screenshots from real filesystem using Shiki + actual running NodeRoom Playwright screenshots + data-noderoom selector + DOMRect + screenshotPath",
   "onboardingModel": "ordered steps only; no video timestamps stored",
   "visualModel": "NodeRoom trace-tab look and feel with Understand-Anything-backed minimap",
   "captureAssets": 19

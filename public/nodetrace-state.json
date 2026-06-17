@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T18:34:48.894Z",
+  "generatedAt": "2026-06-17T20:32:28.215Z",
   "session": {
     "id": "trace-coach-noderoom-sqlite",
     "title": "Trace Coach: NodeRoom codebase trace",
@@ -206,9 +206,9 @@
           "selector": "[data-noderoom-surface=\"workSurface.traceStrip\"]",
           "rect": {
             "x": 11,
-            "y": 910,
+            "y": 904,
             "width": 1056,
-            "height": 39
+            "height": 45
           },
           "screenshotPath": "captures/coach-step-01-artifact-entry-ui.png",
           "alt": "NodeRoom bottom room trace strip with recent room events and trace telemetry.",
@@ -231,7 +231,7 @@
           ],
           "highlightStartLine": 1658,
           "highlightEndLine": 1684,
-          "captureKind": "actual-vscode-desktop"
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-01-artifact-entry-minimap.svg",
@@ -282,7 +282,7 @@
           ],
           "highlightStartLine": 15,
           "highlightEndLine": 47,
-          "captureKind": "actual-vscode-desktop"
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-02-detail-tabs-minimap.svg",
@@ -331,9 +331,9 @@
             "    - panels",
             "      - traceData.ts"
           ],
-          "highlightStartLine": 24,
-          "highlightEndLine": 66,
-          "captureKind": "actual-vscode-desktop"
+          "highlightStartLine": 27,
+          "highlightEndLine": 69,
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-03-trace-data-minimap.svg",
@@ -342,8 +342,8 @@
         },
         "codeBlock": {
           "filePath": "src/ui/panels/traceData.ts",
-          "startLine": 24,
-          "endLine": 66,
+          "startLine": 27,
+          "endLine": 69,
           "snippet": "  label: string;\n  detail?: string;\n  status: TraceTone;\n  /** Collapsible section (phase / spec / status) — keeps hundreds of steps navigable. */\n  group?: string;\n  /** When present, the step opens this cell on the work surface (split + pulse). */\n  targetArtifactId?: string;\n  targetElementId?: string;\n  /** QA steps carry a captured screenshot (served from /public/qa-trace) + metrics. */\n  screenshotUrl?: string;\n  metrics?: { label: string; value: string }[];\n  /** Pipeline-fed evidence: screenshots, logs, SSIM flicker diffs. */\n  attachments?: TraceAttachment[];\n}\n\n/** Client-side cap on rendered steps (BOUND rule). Beyond this, paginate/lazy-load from the server. */\nexport const MAX_TRACE_STEPS = 500;\n\nexport interface TraceRecord {\n  id: string;\n  kind: \"agent\" | \"qa\";\n  title: string;\n  subtitle: string;\n  ts: string;\n  source: { tool: string; version?: string; env?: string; model?: string };\n  verdict?: { label: string; tone: TraceTone };\n  /** Honest provenance at the evidence level (NOT fabricated per-line code attribution). */\n  attribution?: { ai: number; mixed: number; human: number };\n  steps: TraceStep[];\n  evidenceCards?: EvidenceCardArtifact[];\n  raw: unknown;\n}\n\n/**\n * A REAL run of scripts/design-qa/floor.ts captured 2026-06-17 (P0=0 P1=0 P2=0 → SHIP).\n * The screenshots are the floor's actual output, copied to /public/qa-trace. Refresh by re-running\n * the floor and re-copying the PNGs; the metrics below are this run's real stdout.\n */\nexport const QA_TRACE_RECORD: TraceRecord = {\n  id: \"qa-design-floor\",\n  kind: \"qa\",\n  title: \"QA · NodeRoom design floor\",\n  subtitle: \"Playwright visual + design-token sweep across 3 surfaces (scripts/design-qa/floor.ts)\","
         }
       },
@@ -382,9 +382,9 @@
             "    - panels",
             "      - TraceStepRow.tsx"
           ],
-          "highlightStartLine": 18,
-          "highlightEndLine": 46,
-          "captureKind": "actual-vscode-desktop"
+          "highlightStartLine": 20,
+          "highlightEndLine": 48,
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-04-step-row-minimap.svg",
@@ -393,9 +393,9 @@
         },
         "codeBlock": {
           "filePath": "src/ui/panels/TraceStepRow.tsx",
-          "startLine": 18,
-          "endLine": 46,
-          "snippet": "      <span className=\"r-tracevu-step-body\">\n        <span className=\"r-tracevu-step-label\">\n          {s.label}\n          {ssims.map((a, i) => <span key={i} className=\"r-tracevu-ssim\" data-flicker={String(a.diffRatio > 0.02)}>Δ {(a.diffRatio * 100).toFixed(1)}%</span>)}\n          {s.targetArtifactId && <ArrowUpRight size={11} />}\n        </span>\n        {s.detail && <span className=\"r-tracevu-step-detail\">{s.detail}</span>}\n        {s.screenshotUrl && (\n          <a className=\"r-tracevu-shotlink\" href={s.screenshotUrl} target=\"_blank\" rel=\"noopener noreferrer\">\n            <span className=\"r-tracevu-shotframe\"><img className=\"r-tracevu-shot\" src={s.screenshotUrl} alt={s.label} loading=\"lazy\" /></span>\n          </a>\n        )}\n        {shots.map((a, i) => (\n          <a key={i} className=\"r-tracevu-shotlink\" href={a.url} target=\"_blank\" rel=\"noopener noreferrer\">\n            <span className=\"r-tracevu-shotframe\">\n              <img className=\"r-tracevu-shot\" src={a.url} alt={a.label ?? s.label} loading=\"lazy\" />\n              {a.box && <span className=\"r-tracevu-box\" style={{ left: `${a.box.x * 100}%`, top: `${a.box.y * 100}%`, width: `${a.box.w * 100}%`, height: `${a.box.h * 100}%` }} aria-hidden=\"true\" />}\n            </span>\n          </a>\n        ))}\n        {logs.map((a, i) => <pre key={i} className=\"r-tracevu-log\">{a.text}</pre>)}\n        {s.metrics && (\n          <span className=\"r-tracevu-metrics\">\n            {s.metrics.map((m) => <span key={m.label}><b>{m.value}</b> {m.label}</span>)}\n          </span>\n        )}\n      </span>\n    </>\n  );"
+          "startLine": 20,
+          "endLine": 48,
+          "snippet": "      <span className=\"r-tracevu-step-body\">\n        <span className=\"r-tracevu-step-label\">\n          {s.label}\n          {ssims.map((a, i) => <span key={i} className=\"r-tracevu-ssim\" data-flicker={String(a.diffRatio > 0.02)}>Δ {(a.diffRatio * 100).toFixed(1)}%</span>)}\n          {s.targetArtifactId && <ArrowUpRight size={11} />}\n        </span>\n        {s.detail && <span className=\"r-tracevu-step-detail\">{s.detail}</span>}\n        {s.screenshotUrl && (\n          <a className=\"r-tracevu-shotlink\" href={s.screenshotUrl} target=\"_blank\" rel=\"noopener noreferrer\">\n            <span className=\"r-tracevu-shotframe\"><img className=\"r-tracevu-shot\" src={s.screenshotUrl} alt={s.label} loading=\"lazy\" /></span>\n          </a>\n        )}\n        {shots.map((a, i) => (\n          <a key={i} className=\"r-tracevu-shotlink\" href={a.url} target=\"_blank\" rel=\"noopener noreferrer\">\n            <span className=\"r-tracevu-shotframe\">\n              <img className=\"r-tracevu-shot\" src={a.url} alt={a.label ?? s.label} loading=\"lazy\" />\n              {a.box && <span className=\"r-tracevu-box\" style={{ left: `${a.box.x * 100}%`, top: `${a.box.y * 100}%`, width: `${a.box.w * 100}%`, height: `${a.box.h * 100}%` }} aria-hidden=\"true\" />}\n            </span>\n          </a>\n        ))}\n        {pdfs.map((a, i) => (\n          <span key={`pdf-${i}`} className=\"r-tracevu-shotlink\">\n            <PdfCitation url={a.url} page={a.page} boxes={a.boxes} label={a.label ?? s.label} />\n          </span>\n        ))}\n        {logs.map((a, i) => <pre key={i} className=\"r-tracevu-log\">{a.text}</pre>)}\n        {s.metrics && (\n          <span className=\"r-tracevu-metrics\">\n            {s.metrics.map((m) => <span key={m.label}><b>{m.value}</b> {m.label}</span>)}"
         }
       },
       {
@@ -435,7 +435,7 @@
           ],
           "highlightStartLine": 24,
           "highlightEndLine": 66,
-          "captureKind": "actual-vscode-desktop"
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-05-flow-minimap.svg",
@@ -463,7 +463,7 @@
             "x": 11,
             "y": 101,
             "width": 1056,
-            "height": 809
+            "height": 803
           },
           "screenshotPath": "captures/coach-step-06-style-ui.png",
           "alt": "NodeRoom dark trace surface with record list, detail pane, tabs, and step cards.",
@@ -483,9 +483,9 @@
             "  - app",
             "    - styles.css"
           ],
-          "highlightStartLine": 870,
-          "highlightEndLine": 926,
-          "captureKind": "actual-vscode-desktop"
+          "highlightStartLine": 897,
+          "highlightEndLine": 953,
+          "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
           "imagePath": "captures/coach-step-06-style-minimap.svg",
@@ -494,8 +494,8 @@
         },
         "codeBlock": {
           "filePath": "src/app/styles.css",
-          "startLine": 870,
-          "endLine": 926,
+          "startLine": 897,
+          "endLine": 953,
           "snippet": ".r-tracevu-rec-head { display: flex; align-items: center; gap: 6px; min-width: 0; }\n.r-tracevu-rec-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; font-weight: 700; color: var(--text-primary); }\n.r-tracevu-rec-sub { font-size: 11px; line-height: 1.35; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }\n.r-tracevu-rec-meta { font-size: 10px; color: var(--text-tertiary); font-family: var(--font-mono); }\n.r-tracevu-pill { flex: none; margin-left: auto; padding: 1px 6px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }\n.r-tracevu-pill[data-tone=\"ok\"] { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success-ink); }\n.r-tracevu-pill[data-tone=\"warn\"] { background: var(--warning-tint); color: var(--warning-ink); }\n.r-tracevu-pill[data-tone=\"risk\"] { background: var(--danger-tint); color: var(--danger-ink); }\n.r-tracevu-detail { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }\n.r-tracevu-detail-head { flex: none; padding: 14px 16px 0; border-bottom: 1px solid var(--line); }\n.r-tracevu-detail-head strong { font-size: 15px; color: var(--text-primary); }\n.r-tracevu-detail-head p { margin: 3px 0 10px; font-size: 12px; color: var(--text-muted); line-height: 1.4; }\n.r-tracevu-tabs { display: flex; gap: 2px; }\n.r-tracevu-tabs button { padding: 6px 11px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; }\n.r-tracevu-tabs button[data-on=\"true\"] { color: var(--accent-ink); border-bottom-color: var(--accent-primary); }\n.r-tracevu-tabs button:not([data-on=\"true\"]):hover { color: var(--text-secondary); }\n.r-tracevu-detail-body { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; }\n.r-tracevu-overview { display: flex; flex-direction: column; gap: 18px; }\n.r-tracevu-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }\n.r-tracevu-facts .kicker { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 8px; }\n.r-tracevu-facts dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 12px; }\n.r-tracevu-facts dt { color: var(--text-muted); }\n.r-tracevu-facts dd { margin: 0; color: var(--text-primary); font-family: var(--font-mono); font-size: 11.5px; text-align: right; overflow: hidden; text-overflow: ellipsis; }\n.r-tracevu-verdict { display: inline-block; font-size: 12px; font-weight: 700; color: var(--text-primary); }\n.r-tracevu-verdict[data-tone=\"ok\"] { color: var(--success-ink); }\n.r-tracevu-attr { display: flex; flex-direction: column; gap: 8px; }\n.r-tracevu-attrbar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bg-secondary); }\n.r-tracevu-attrbar span[data-seg=\"ai\"] { background: var(--accent-primary); }\n.r-tracevu-attrbar span[data-seg=\"mixed\"] { background: var(--warning-ink); }\n.r-tracevu-attrbar span[data-seg=\"human\"] { background: var(--success); }\n.r-tracevu-attrkey { display: flex; gap: 16px; font-size: 11px; color: var(--text-muted); }\n.r-tracevu-attrkey span { display: inline-flex; align-items: center; gap: 5px; }\n.r-tracevu-attrkey span::before { content: \"\"; width: 8px; height: 8px; border-radius: 2px; }\n.r-tracevu-attrkey span[data-seg=\"ai\"]::before { background: var(--accent-primary); }\n.r-tracevu-attrkey span[data-seg=\"mixed\"]::before { background: var(--warning-ink); }\n.r-tracevu-attrkey span[data-seg=\"human\"]::before { background: var(--success); }\n.r-tracevu-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }\n.r-tracevu-step { width: 100%; display: flex; gap: 11px; text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-secondary); color: var(--text-secondary); }\nbutton.r-tracevu-step { cursor: pointer; transition: border-color var(--motion-fast), background var(--motion-fast); }\nbutton.r-tracevu-step:hover, button.r-tracevu-step:focus-visible { border-color: var(--accent-border); background: var(--accent-tint); outline: none; }\n.r-tracevu-step-idx { flex: none; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; background: var(--bg-primary); color: var(--text-muted); font-size: 11px; font-weight: 700; font-family: var(--font-mono); }\n.r-tracevu-step[data-tone=\"ok\"] .r-tracevu-step-idx { color: var(--success-ink); }\n.r-tracevu-step[data-tone=\"warn\"] .r-tracevu-step-idx { color: var(--warning-ink); }\n.r-tracevu-step-body { min-width: 0; display: flex; flex-direction: column; gap: 5px; }\n.r-tracevu-step-label { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 650; color: var(--text-primary); }\n.r-tracevu-step-detail { font-size: 11.5px; line-height: 1.4; color: var(--text-muted); }\n.r-tracevu-shot { max-width: 100%; width: 440px; border-radius: 8px; border: 1px solid var(--line); margin-top: 2px; }\n.r-tracevu-metrics { display: flex; flex-wrap: wrap; gap: 5px 12px; font-size: 10.5px; color: var(--text-tertiary); font-family: var(--font-mono); }\n.r-tracevu-metrics b { color: var(--text-secondary); font-weight: 700; }\n.r-tracevu-raw { margin: 0; padding: 14px; border-radius: 10px; background: var(--bg-secondary); border: 1px solid var(--line); color: var(--text-secondary); font: 11px/1.5 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }\n.r-tracetab { color: var(--text-muted); }\n.r-tracetab[data-active=\"true\"] { color: var(--accent-ink); }\n/* Scale: collapsible groups + content-visibility windowing keep hundreds of steps cheap. */\n.r-tracevu-groups { display: flex; flex-direction: column; gap: 8px; }\n.r-tracevu-group { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }\n.r-tracevu-group > summary { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: pointer; list-style: none; font-size: 12px; font-weight: 700; color: var(--text-secondary); background: var(--bg-secondary); }\n.r-tracevu-group > summary::-webkit-details-marker { display: none; }"
         }
       }

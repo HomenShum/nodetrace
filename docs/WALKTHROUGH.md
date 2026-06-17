@@ -72,6 +72,7 @@ For a no-skip Next proof:
 npm run installer:next:e2e
 npm run agent:scale:smoke
 npm run understand:noderoom
+npm run capture:plan:smoke
 npm run capture:noderoom:real
 npm run trace-coach:sqlite
 ```
@@ -84,9 +85,13 @@ build when the target app has a build script. The receipt is:
 .nodetrace/setup-receipt.json
 ```
 
-`npm run capture:noderoom:real` starts the latest local NodeRoom app, captures
-actual VS Code source slices, measures live `data-noderoom-surface` DOMRects,
-and stores actual running-app screenshots plus
+`nodetrace capture --plan <capture-plan.json>` is the reusable version for any
+repo. `nodetrace-capture` provides the same CLI as a dedicated binary, and
+`nodetrace-mcp` exposes the capture plan validator and runner over stdio MCP.
+`npm run capture:noderoom:real` uses that same capture engine for the latest
+local NodeRoom app, captures actual source slices with the NodeTrace
+Shiki-backed code browser, measures live
+`data-noderoom-surface` DOMRects, and stores actual running-app screenshots plus
 `public/captures/noderoom-real-capture-manifest.json`.
 `npm run trace-coach:sqlite` switches the demo state to a NodeRoom codebase
 Trace Coach campaign based on that manifest, NodeRoom trace-tab files,
@@ -126,9 +131,10 @@ Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
 Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
-Run npm run understand:noderoom, npm run capture:noderoom:real, then npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, source/UI captures, or minimap graph.
+Run npm run understand:noderoom, npm run capture:plan:smoke, npm run capture:noderoom:real, then npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, source/UI captures, or minimap graph.
+Use nodetrace capture --plan or nodetrace-mcp when porting the same capture workflow to another repo.
 Confirm docs/eval/nodetrace-understand-anything-noderoom.json says ok true and public/captures/noderoom-trace-knowledge-graph.json is Understand-Anything-backed.
-Confirm public/captures/noderoom-real-capture-manifest.json points to actual VS Code and running NodeRoom PNG captures, not generated stand-ins.
+Confirm public/captures/noderoom-real-capture-manifest.json points to actual code-browser source and running NodeRoom PNG captures, not generated stand-ins.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

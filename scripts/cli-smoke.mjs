@@ -15,6 +15,7 @@ validateTarget(viteTarget, "vite", issues);
 createTarget(nextTarget, "next");
 runInstall(nextTarget, ["--framework", "next"]);
 validateTarget(nextTarget, "next", issues);
+runCaptureDryRun();
 
 const report = {
   ok: issues.length === 0,
@@ -63,6 +64,19 @@ function runInstall(targetDir, extraArgs) {
     encoding: "utf8",
   });
   if (result.status !== 0) issues.push(`nodetrace add failed for ${targetDir}: ${[result.stdout, result.stderr].join("\n").slice(-1200)}`);
+}
+
+function runCaptureDryRun() {
+  for (const command of [
+    ["bin/nodetrace.mjs", "capture", "--plan", "examples/real-codebase-capture/noderoom.capture.json", "--dry-run"],
+    ["bin/nodetrace-capture.mjs", "--plan", "examples/real-codebase-capture/noderoom.capture.json", "--dry-run"],
+  ]) {
+    const result = spawnSync(process.execPath, command, {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    });
+    if (result.status !== 0) issues.push(`capture dry run failed for ${command[0]}: ${[result.stdout, result.stderr].join("\n").slice(-1200)}`);
+  }
 }
 
 function validateTarget(targetDir, framework, issues) {

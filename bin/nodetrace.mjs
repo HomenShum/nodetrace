@@ -13,6 +13,9 @@ const command = args[0] ?? "help";
 
 if (command === "add") {
   addNodeTrace(parseOptions(args.slice(1)));
+} else if (command === "capture") {
+  const { runCaptureCli } = await import("../src/capture/codebaseCapture.mjs");
+  await runCaptureCli(args.slice(1), { cwd: process.cwd() });
 } else if (command === "help" || command === "--help" || command === "-h") {
   printHelp();
 } else if (command === "--version" || command === "-v") {
@@ -391,10 +394,14 @@ function printHelp() {
 
 Commands:
   nodetrace add [--target <dir>] [--framework vite|next] [--force] [--skip-install] [--skip-verify]
+  nodetrace capture --plan <capture-plan.json> [--dry-run]
 
 Default add behavior copies Trace Lens, patches package scripts/dependencies,
 runs install, runs the no-key happy path, runs target smoke, and runs build
 when the target app has a build script. Vite targets get nodetrace.html; Next
 targets get an App Router /nodetrace page.
+
+Capture runs a reusable real-codebase proof plan: actual source screenshots
+from real files plus actual running-app Playwright screenshots and a manifest.
 `);
 }

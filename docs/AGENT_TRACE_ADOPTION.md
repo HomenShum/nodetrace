@@ -24,9 +24,15 @@ Then wire our agent trace data into NodeTraceState:
 - trace_events: every agent step, tool call, retry, browser action, scheduler event, and receipt
 - trace_proofs: source-backed business or QA evidence cards
 - trace_code_ownership: Builder-only ownership served by a privileged server route
-- coach.sourceView: actual IDE screenshot for the active code section
+- coach.sourceView: actual source screenshot for the active code section
 - coach.uiCapture: actual running-app screenshot with selector and DOMRect
 - coach.mapCapture: codebase minimap backed by a graph JSON file, compatible with an Understand Anything export
+
+For visual codebase onboarding, copy examples/real-codebase-capture/noderoom.capture.json,
+edit it for this repo, run nodetrace capture --plan <plan> --dry-run, then run
+nodetrace capture --plan <plan>. Use the default `editor.mode: "code-browser"`
+for fast CLI-friendly source screenshots from real files. MCP clients can use
+nodetrace-mcp with validate_capture_plan followed by capture_codebase.
 
 Tag visible UI surfaces with data-nodetrace-surface. Keep public client state
 free of file paths, query names, mutation names, skill paths, raw prompts,
@@ -74,6 +80,7 @@ npm run happy-path
 npm run smoke
 npm run builder:smoke
 npm run agent:scale:smoke
+npm run capture:plan:smoke
 npm run build
 ```
 

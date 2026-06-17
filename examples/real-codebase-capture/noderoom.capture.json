@@ -1,0 +1,138 @@
+{
+  "id": "noderoom-real-capture",
+  "generator": "nodetrace reusable codebase capture",
+  "sourceRepo": "HomenShum/noderoom",
+  "sourceRoot": "../../..",
+  "captureRoot": "../../public/captures",
+  "manifestPath": "../../public/captures/noderoom-real-capture-manifest.json",
+  "assetPathPrefix": "captures",
+  "timeoutMs": 120000,
+  "editor": {
+    "mode": "code-browser",
+    "codeCli": "code",
+    "host": "127.0.0.1",
+    "port": 5199
+  },
+  "app": {
+    "name": "NodeRoom",
+    "host": "127.0.0.1",
+    "port": 5179,
+    "startCwd": "../../..",
+    "startCommand": {
+      "command": "npm",
+      "args": ["run", "dev", "--", "--host", "{host}", "--port", "{port}", "--strictPort"]
+    },
+    "setupActions": [
+      { "type": "goto", "query": { "mode": "memory" } },
+      { "type": "localStorage.set", "key": "noderoom:tour:v1", "value": "done" },
+      { "type": "click", "testId": "start-demo-room", "ifVisible": true, "timeoutMs": 1500 },
+      { "type": "waitFor", "testId": "artifact-panel" },
+      { "type": "click", "testId": "trace-tab" },
+      { "type": "waitFor", "testId": "trace-surface" }
+    ]
+  },
+  "steps": [
+    {
+      "id": "coach-step-01-artifact-entry",
+      "source": {
+        "filePath": "src/ui/panels/Artifact.tsx",
+        "anchor": "data-noderoom-surface=\"workSurface.traceStrip\"",
+        "before": -8,
+        "after": 18
+      },
+      "ui": {
+        "selector": "[data-noderoom-surface=\"workSurface.traceStrip\"]",
+        "actions": [{ "type": "waitFor", "testId": "room-trace" }],
+        "captureKind": "actual-noderoom-playwright"
+      }
+    },
+    {
+      "id": "coach-step-02-detail-tabs",
+      "source": {
+        "filePath": "src/ui/panels/TraceSurface.tsx",
+        "anchor": "const detailTabs =",
+        "before": -4,
+        "after": 32
+      },
+      "ui": {
+        "selector": "[data-testid=\"trace-surface\"] .r-tracevu-tabs",
+        "actions": [
+          { "type": "waitFor", "testId": "trace-surface" },
+          { "type": "click", "testId": "trace-tab-overview" }
+        ],
+        "captureKind": "actual-noderoom-playwright"
+      }
+    },
+    {
+      "id": "coach-step-03-trace-data",
+      "source": {
+        "filePath": "src/ui/panels/traceData.ts",
+        "anchor": "export interface TraceRecord",
+        "before": -18,
+        "after": 24
+      },
+      "ui": {
+        "selector": "[data-testid=\"trace-record\"]",
+        "actions": [
+          { "type": "waitFor", "testId": "trace-surface" },
+          { "type": "click", "testId": "trace-tab-overview" }
+        ],
+        "captureKind": "actual-noderoom-playwright"
+      }
+    },
+    {
+      "id": "coach-step-04-step-row",
+      "source": {
+        "filePath": "src/ui/panels/TraceStepRow.tsx",
+        "anchor": "a.box &&",
+        "before": -16,
+        "after": 12
+      },
+      "ui": {
+        "selector": "[data-testid=\"trace-step\"] .r-tracevu-shotframe",
+        "actions": [
+          { "type": "waitFor", "testId": "trace-surface" },
+          { "type": "click", "testId": "trace-record", "hasText": "QA", "ifAttributeNot": { "name": "data-on", "value": "true" } },
+          { "type": "click", "testId": "trace-tab-steps" }
+        ],
+        "waitForImage": true,
+        "captureKind": "actual-noderoom-playwright"
+      }
+    },
+    {
+      "id": "coach-step-05-flow",
+      "source": {
+        "filePath": "src/ui/panels/TraceFlow.tsx",
+        "anchor": "const { nodes, edges }",
+        "before": -8,
+        "after": 34
+      },
+      "ui": {
+        "selector": "[data-testid=\"trace-flow\"]",
+        "actions": [
+          { "type": "waitFor", "testId": "trace-surface" },
+          { "type": "click", "testId": "trace-record", "hasText": "QA", "ifAttributeNot": { "name": "data-on", "value": "true" } },
+          { "type": "click", "testId": "trace-tab-flow" }
+        ],
+        "captureKind": "actual-noderoom-playwright"
+      }
+    },
+    {
+      "id": "coach-step-06-style",
+      "source": {
+        "filePath": "src/app/styles.css",
+        "anchor": ".r-tracevu-tabs",
+        "before": -12,
+        "after": 44
+      },
+      "ui": {
+        "selector": ".r-tracevu",
+        "actions": [
+          { "type": "waitFor", "testId": "trace-surface" },
+          { "type": "click", "testId": "trace-tab-overview" }
+        ],
+        "captureKind": "actual-noderoom-playwright"
+      }
+    }
+  ]
+}

@@ -96,7 +96,7 @@ export function DemoDashboard() {
               </div>
               <div className="launchCheck">
                 <CheckCircle2 size={15} aria-hidden="true" />
-                <span>Seeded from real NodeRoom files, VS Code captures, selectors, DOMRects, running-app screenshots, and flow metadata.</span>
+                <span>Seeded from real NodeRoom files, code-browser captures, selectors, DOMRects, running-app screenshots, and flow metadata.</span>
               </div>
             </aside>
           </header>
@@ -211,7 +211,7 @@ function TraceCoachPanel({
                 <small>
                   {activeStep.sourceView.repositoryRoot} - lines {activeStep.sourceView.highlightStartLine}-{activeStep.sourceView.highlightEndLine}
                 </small>
-                <img className="evidenceShot ideShot" src={assetPath(activeStep.sourceView.imagePath)} alt={`VS Code capture for ${activeStep.sourceView.activeFile}`} />
+                <img className="evidenceShot ideShot" src={assetPath(activeStep.sourceView.imagePath)} alt={`Source capture for ${activeStep.sourceView.activeFile}`} />
               </section>
 
               <section className="coachPane uiPane" aria-label="UI capture">

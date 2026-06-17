@@ -28,6 +28,7 @@ Run:
 
 ```bash
 npm run understand:noderoom
+npm run capture:plan:smoke
 npm run capture:noderoom:real
 npm run trace-coach:sqlite
 npm run dev
@@ -62,7 +63,7 @@ The demo dashboard then renders a NodeRoom-style Trace Coach surface with:
 - detail tabs for Overview, Steps, Minimap, and Raw JSON
 - ordered step labels, not video timestamps
 - real NodeRoom code slices
-- actual VS Code screenshots with the accurate folder path and highlighted code section
+- actual code-browser screenshots with the accurate folder path and highlighted code section
 - actual running NodeRoom screenshots with `data-noderoom-*` selectors, DOMRect, screenshot path, and bounding box
 - Mermaid flow source for the active step
 - an Understand-Anything-backed minimap from `noderoom-trace-knowledge-graph.json`
@@ -84,7 +85,7 @@ The capture model is structural:
 
 ```text
 NodeRoom source path + line range
-actual VS Code screenshot
+actual code-browser source screenshot
 NodeRoom UI selector + DOMRect
 actual running NodeRoom screenshot
 Understand-Anything graph JSON and minimap screenshot
@@ -92,9 +93,10 @@ Mermaid source for the active minimap tab
 ```
 
 That means a coding agent can adapt the example to another repo by changing
-anchors and selectors, then running real IDE and app capture before seeding
-SQLite. The trace UI does not need video timestamps to display the guided
-codebase trace.
+anchors and selectors in a capture plan, then running `nodetrace capture --plan`
+or the `nodetrace-mcp` `capture_codebase` tool before seeding SQLite. The
+NodeRoom command is just a preset over the reusable capture engine. The trace UI
+does not need video timestamps to display the guided codebase trace.
 
 ## Coding-Agent Prompt
 
@@ -105,10 +107,12 @@ shape: record list, Overview, Steps, Minimap, and Raw JSON. Use ordered step lab
 not video timestamps. For each step, provide codeBlock.filePath, startLine,
 endLine, snippet, uiCapture.selector, uiCapture.rect, uiCapture.screenshotPath,
 sourceView.imagePath, mapCapture.imagePath, mapCapture.graphPath, and
-diagram.source. Capture visual assets from real VS Code and the running app;
-do not publish generated IDE or UI stand-ins. Keep the first pass local and
+diagram.source. Capture visual assets from the real source tree and the running
+app; do not publish generated source or UI stand-ins. Keep the first pass local and
 SQLite-backed. Run npm run understand:noderoom, npm run capture:noderoom:real,
-npm run trace-coach:sqlite, npm run smoke, and npm run build.
+npm run trace-coach:sqlite, npm run smoke, and npm run build. For another repo,
+copy examples/real-codebase-capture/noderoom.capture.json and run nodetrace
+capture --plan <plan>.
 ```
 
 ## Adapting To Another Codebase
@@ -117,7 +121,7 @@ npm run trace-coach:sqlite, npm run smoke, and npm run build.
    renderer, flow/graph renderer, styling, and raw audit payload.
 2. Add stable `data-*` selectors to target UI regions.
 3. Use an AST/LSP/coding-agent reader to resolve source file ranges.
-4. Use Playwright to compute `getBoundingClientRect()` and capture screenshots.
+4. Run `nodetrace capture --plan <plan>` or `nodetrace-mcp` to compute `getBoundingClientRect()` and capture screenshots.
 5. Store those values in SQLite and publish `NodeTraceState.coach`.
 6. Keep free graph exploration behind the linear walkthrough so beginners are
    not dropped into a large graph first.

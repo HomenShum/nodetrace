@@ -71,12 +71,21 @@ if (issues.length === 0) {
     "public/captures/noderoom-real-capture-manifest.json",
     "NodeRoom codebase Trace Coach",
     ".claude/skills/real-codebase-captures/SKILL.md",
-    "actual IDE screenshots",
+    "examples/real-codebase-capture/noderoom.capture.json",
+    "nodetrace capture --plan",
+    "nodetrace-capture",
+    "nodetrace-mcp",
+    "actual source screenshots",
     "actual running-app screenshots",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
   if (!Array.isArray(pkg.files) || !pkg.files.includes(".claude/")) issues.push("package.json files list must include .claude/");
+  for (const bin of ["nodetrace", "nodetrace-capture", "nodetrace-mcp"]) {
+    if (!pkg.bin?.[bin]) issues.push(`package.json bin missing ${bin}`);
+  }
+  if (!pkg.scripts?.["capture:plan:smoke"]) issues.push("package.json scripts missing capture:plan:smoke");
+  if (!pkg.scripts?.["mcp:smoke"]) issues.push("package.json scripts missing mcp:smoke");
   for (const required of ["NodeRoom trace records", "coachPanel", "evidenceShot", "Minimap", "r-tracevu-tabs", "stepLabel"]) {
     const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
     const styles = readFileSync("src/styles.css", "utf8");
@@ -90,7 +99,7 @@ if (issues.length === 0) {
   for (const required of ["--bg-app: #f5f7fb", "coachPanel", "r-tracevu-tabs"]) {
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`light/readable trace UI missing ${required}`);
   }
-  for (const required of ["npm run understand:noderoom", "npm run capture:noderoom:real", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph", "actual VS Code source screenshots", "actual running NodeRoom screenshots"]) {
+  for (const required of ["npm run understand:noderoom", "npm run capture:plan:smoke", "npm run capture:noderoom:real", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph", "actual code-browser source screenshots", "actual running NodeRoom screenshots", "nodetrace capture --plan", "nodetrace-mcp"]) {
     if (!agentNotes.includes(required)) issues.push(`AGENTS.md missing ${required}`);
   }
   const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
@@ -108,11 +117,11 @@ if (issues.length === 0) {
   if (!String(coachReport.knowledgeGraphGenerator ?? "").includes("Understand-Anything")) {
     issues.push("trace coach report is not backed by Understand-Anything output");
   }
-  if (!String(realCaptureManifest.captureModel ?? "").includes("actual VS Code") || !String(realCaptureManifest.captureModel ?? "").includes("actual running NodeRoom")) {
-    issues.push("real capture manifest is not backed by actual VS Code and running NodeRoom captures");
+  if (!String(realCaptureManifest.captureModel ?? "").includes("actual code-browser") || !String(realCaptureManifest.captureModel ?? "").includes("actual running NodeRoom")) {
+    issues.push("real capture manifest is not backed by actual code-browser and running NodeRoom captures");
   }
-  if (!String(coachReport.captureModel ?? "").includes("actual VS Code") || !String(coachReport.captureModel ?? "").includes("actual running NodeRoom")) {
-    issues.push("trace coach report is not backed by actual VS Code and running NodeRoom captures");
+  if (!String(coachReport.captureModel ?? "").includes("actual code-browser") || !String(coachReport.captureModel ?? "").includes("actual running NodeRoom")) {
+    issues.push("trace coach report is not backed by actual code-browser and running NodeRoom captures");
   }
   if (coachReport.realCaptureSteps !== 6 || !Array.isArray(realCaptureManifest.steps) || realCaptureManifest.steps.length !== 6) {
     issues.push("trace coach real capture manifest must cover all 6 coach steps");
@@ -133,12 +142,14 @@ if (issues.length === 0) {
     "npm run installer:next:e2e",
     "npm run agent:scale:smoke",
     "npm run understand:noderoom",
+    "npm run capture:plan:smoke",
     "npm run capture:noderoom:real",
+    "nodetrace-mcp",
     "setup-receipt.json",
   ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
   }
-  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e", "npm run agent:scale:smoke", "npm run capture:noderoom:real", "125-step QA-agent trace"]) {
+  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e", "npm run agent:scale:smoke", "npm run capture:plan:smoke", "npm run capture:noderoom:real", "nodetrace capture --plan", "nodetrace-mcp", "125-step QA-agent trace"]) {
     if (!porting.includes(required)) issues.push(`docs/PORTING.md missing ${required}`);
   }
   for (const file of [
@@ -153,7 +164,13 @@ if (issues.length === 0) {
     "scripts/agent-trace-scale-smoke.mjs",
     "scripts/understand-anything-noderoom.mjs",
     "scripts/trace-coach-sqlite.mjs",
+    "scripts/mcp-smoke.mjs",
+    "src/capture/codebaseCapture.mjs",
+    "bin/nodetrace-capture.mjs",
+    "bin/nodetrace-mcp.mjs",
     "examples/trace-coach-sqlite/README.md",
+    "examples/real-codebase-capture/README.md",
+    "examples/real-codebase-capture/noderoom.capture.json",
     ".claude/skills/real-codebase-captures/SKILL.md",
     ".claude/skills/real-codebase-captures/agents/openai.yaml",
     "docs/eval/nodetrace-understand-anything-noderoom.json",

@@ -480,7 +480,7 @@ const report = {
   realCaptureManifest: relativePath(realCaptureManifestPath),
   realCaptureSteps: realCaptureManifest ? realCaptureManifest.steps.length : 0,
   captureModel: realCaptureManifest
-    ? `${realCaptureManifest.captureModel ?? "actual IDE screenshots + actual running app screenshots"} + data-noderoom selector + DOMRect + screenshotPath`
+    ? `${realCaptureManifest.captureModel ?? "actual source screenshots + actual running app screenshots"} + data-noderoom selector + DOMRect + screenshotPath`
     : "explicit generated fallback requested with --allow-generated-captures",
   onboardingModel: "ordered steps only; no video timestamps stored",
   visualModel: "NodeRoom trace-tab look and feel with Understand-Anything-backed minimap",
@@ -749,7 +749,7 @@ function renderIdeSvg(step) {
     <rect x="24" y="24" width="1152" height="672" rx="18" fill="#101317" stroke="#2b333d"/>
     <rect x="24" y="24" width="1152" height="46" rx="18" fill="#171b21"/>
     <circle cx="52" cy="47" r="6" fill="#e87855"/><circle cx="72" cy="47" r="6" fill="#e5b567"/><circle cx="92" cy="47" r="6" fill="#78d39f"/>
-    <text x="120" y="52" fill="#f2f4f7" font-size="14" font-weight="700">Visual Studio Code recomposition - ${escapeXml(step.sourceView.repositoryRoot)}</text>
+    <text x="120" y="52" fill="#f2f4f7" font-size="14" font-weight="700">Generated source fallback - ${escapeXml(step.sourceView.repositoryRoot)}</text>
     <rect x="24" y="70" width="244" height="626" fill="#0d1014"/>
     <text x="42" y="100" fill="#ffb195" font-size="12" font-weight="800">EXPLORER</text>
     ${tree}

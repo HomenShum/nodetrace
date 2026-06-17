@@ -23,6 +23,7 @@ For a full no-skip Next App Router proof from this repo:
 npm run installer:next:e2e
 npm run agent:scale:smoke
 npm run understand:noderoom
+npm run capture:plan:smoke
 npm run capture:noderoom:real
 npm run trace-coach:sqlite
 ```
@@ -31,13 +32,18 @@ It creates a throwaway Next target, runs the installer, initializes SQLite,
 runs target smoke, and passes the target's real `next build`.
 `agent:scale:smoke` creates a 125-step QA-agent trace fixture and proves the
 public client state stays bounded and Builder-safe.
-`capture:noderoom:real` starts the latest local NodeRoom checkout, opens actual
-VS Code source slices, opens the running NodeRoom app, measures live DOMRects,
-and writes PNG screenshots plus `public/captures/noderoom-real-capture-manifest.json`.
+`nodetrace capture --plan <capture-plan.json>` is the reusable capture tool for
+other repos. It is also exposed as `nodetrace-capture` and as the `nodetrace-mcp`
+stdio server with `validate_capture_plan` and `capture_codebase` tools.
+`capture:noderoom:real` starts the latest local NodeRoom checkout through that
+same capture engine, renders actual NodeRoom source slices in NodeTrace's local
+Shiki-backed code browser, opens the running NodeRoom app, measures live
+DOMRects, and writes PNG screenshots plus
+`public/captures/noderoom-real-capture-manifest.json`.
 `trace-coach:sqlite` creates a NodeRoom codebase onboarding trace from those
 manifest-backed captures and the NodeRoom trace-tab implementation. Use that
 pattern for another repo by replacing the file anchors, stable UI selectors,
-DOMRects, actual IDE captures, actual running-app captures, minimap graph JSON,
+DOMRects, actual source captures, actual running-app captures, minimap graph JSON,
 and Mermaid source with values captured from the target app. Keep the
 walkthrough ordered by step label, not by video timecode. `understand:noderoom`
 is the repeatable proof for the graph step: it runs the installed
@@ -140,6 +146,7 @@ npm run smoke
 npm run builder:smoke
 npm run agent:scale:smoke
 npm run understand:noderoom
+npm run capture:plan:smoke
 npm run capture:noderoom:real
 npm run trace-coach:sqlite
 npm run installer:next:e2e
