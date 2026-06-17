@@ -38,7 +38,7 @@ export function DemoDashboard() {
 
   const heroStats = useMemo(
     () => [
-      { detail: coach?.sourceMode ?? "local", label: "Source repo", value: coach?.sourceRepo ?? "portable" },
+      { detail: coach?.sourceMode === "live" ? "latest full" : "local checkout", label: "Source app", value: "NodeRoom" },
       { detail: "ordered labels", label: "Coach steps", value: String(coach?.steps.length ?? 0) },
       { detail: "overview, steps, minimap, raw", label: "Trace tabs", value: "4" },
     ],
@@ -128,6 +128,7 @@ function TraceCoachPanel({
   setActiveTab: (tab: CoachTab) => void;
   setActiveStepId: (stepId: string) => void;
 }) {
+  const sourceModeLabel = coach.sourceMode === "live" ? "latest full live checkout" : "full local checkout";
   const activeNodeId = activeStep.diagram.nodeId;
   const rect = activeStep.uiCapture.rect;
   const tabs: Array<{ id: CoachTab; label: string; Icon: typeof ListChecks }> = [
@@ -151,9 +152,9 @@ function TraceCoachPanel({
       <aside className="coachList r-tracevu-list" aria-label="NodeRoom trace records">
         <div className="coachSource">
           <span>Source app</span>
-          <strong>NodeRoom trace tabs</strong>
+          <strong>NodeRoom</strong>
           <small>
-            {coach.sourceRepo} - {coach.steps.length} steps - {coach.sourceMode}
+            {sourceModeLabel} - {coach.sourceRepo} - {coach.steps.length} guided steps
           </small>
         </div>
         {coach.steps.map((step) => (

@@ -36,7 +36,7 @@ const session = {
   title: "Trace Coach: NodeRoom codebase trace",
   status: "verified",
   summary:
-    "A NodeRoom-looking local Trace tab seeded from NodeRoom's real trace UI source path: record list, detail tabs, steps, flow, screenshot boxes, and raw JSON.",
+    "A local Trace tab sample sourced from the latest full NodeRoom checkout, using real NodeRoom trace records, detail tabs, steps, flow, screenshot boxes, and raw JSON.",
   createdAt: startedAt.toISOString(),
 };
 
