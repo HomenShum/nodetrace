@@ -55,38 +55,9 @@ export function DemoDashboard() {
     ],
     [coach],
   );
-  const proofSteps = [
-    { label: "Understand graph", detail: "UA deterministic scripts", done: Boolean(coach) },
-    { label: "SQLite seed", detail: ".nodetrace local runtime", done: state.session.status === "verified" },
-    { label: "Readable trace UI", detail: `${state.traces.length} bounded rows`, done: state.traces.length > 0 },
-  ];
-
   return (
     <TraceLensProvider builderCapable={state.builderCapable}>
       <main className="shell">
-        <aside className="rail">
-          <div className="brand">
-            <div className="mark">NT</div>
-            <div>
-              <strong>NodeTrace</strong>
-              <span>portable trace kit</span>
-            </div>
-          </div>
-          <div className="railProof" aria-label="Local proof path">
-            <p className="eyebrow">Local proof</p>
-            {proofSteps.map((step) => (
-              <div key={step.label} className="railProofStep" data-done={String(step.done)}>
-                <CheckCircle2 size={15} aria-hidden="true" />
-                <span>
-                  <strong>{step.label}</strong>
-                  <small>{step.detail}</small>
-                </span>
-              </div>
-            ))}
-          </div>
-          <p>Cmd/Ctrl-click a tagged trace region to inspect proof, runtime trace, and gated ownership.</p>
-        </aside>
-
         <section className="workspace">
           <header className="showcase" data-nodetrace-surface="shell.statusStrip">
             <div className="showcaseCopy">

@@ -1,30 +1,30 @@
 {
   "ok": true,
-  "startedAt": "2026-06-17T10:04:30.791Z",
-  "completedAt": "2026-06-17T10:06:11.375Z",
-  "totalMs": 100584,
+  "startedAt": "2026-06-17T10:18:24.358Z",
+  "completedAt": "2026-06-17T10:20:12.029Z",
+  "totalMs": 107671,
   "apiKeysRequired": false,
   "framework": "next",
   "phases": [
     {
       "name": "install dependencies",
       "ok": true,
-      "durationMs": 32074
+      "durationMs": 34330
     },
     {
       "name": "happy path",
       "ok": true,
-      "durationMs": 974
+      "durationMs": 1148
     },
     {
       "name": "smoke",
       "ok": true,
-      "durationMs": 714
+      "durationMs": 853
     },
     {
       "name": "build",
       "ok": true,
-      "durationMs": 61226
+      "durationMs": 66472
     }
   ],
   "issues": []

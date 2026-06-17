@@ -50,102 +50,7 @@ button {
 }
 
 .shell {
-  display: grid;
-  grid-template-columns: 228px minmax(0, 1fr);
   min-height: 100vh;
-}
-
-.rail {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  height: 100vh;
-  padding: 18px 10px;
-  border-right: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--text-primary);
-  box-shadow: 8px 0 30px rgba(40, 54, 76, 0.06);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 8px;
-}
-
-.mark {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 8px;
-  background: var(--accent-primary);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.brand strong {
-  display: block;
-  font-size: 14px;
-}
-
-.brand span,
-.rail p {
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.rail p {
-  margin: 0 10px;
-  line-height: 1.5;
-}
-
-.railProof {
-  display: grid;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px;
-  background: var(--bg-secondary);
-}
-
-.railProof .eyebrow {
-  margin-bottom: 2px;
-}
-
-.railProofStep {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  border-radius: 9px;
-  padding: 8px;
-  background: var(--bg-primary);
-  color: var(--text-secondary);
-}
-
-.railProofStep svg {
-  flex: none;
-  margin-top: 2px;
-  color: var(--success-ink);
-}
-
-.railProofStep strong,
-.railProofStep small {
-  display: block;
-}
-
-.railProofStep strong {
-  font-size: 12px;
-}
-
-.railProofStep small {
-  color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1.35;
 }
 
 .workspace {
@@ -1024,12 +929,7 @@ button {
 }
 
 @media (max-width: 760px) {
-  .shell {
-    grid-template-columns: 1fr;
-  }
-
-  .workspace,
-  .rail {
+  .workspace {
     padding: 12px;
   }
 
