@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-17T02:55:21.576Z",
+  "generatedAt": "2026-06-17T03:17:12.203Z",
   "session": {
-    "id": "nodetrace-2026-06-17T02-55-21-557Z",
+    "id": "nodetrace-2026-06-17T03-17-12-183Z",
     "title": "NodeTrace local happy path",
     "status": "verified",
     "summary": "SQLite trace session, proof cards, events, and gated ownership were generated locally."
@@ -41,7 +41,7 @@
   ],
   "proofs": [
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-proof-001",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-proof-001",
       "surfaceId": "workSurface.evidenceCarousel",
       "artifactId": "demo-artifact",
       "elementId": "evidence-card-001",
@@ -53,7 +53,7 @@
       "detail": "Business proof is stored as app-neutral rows keyed by opaque surface ids."
     },
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-proof-002",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-proof-002",
       "surfaceId": "shell.statusStrip",
       "title": "No provider lock-in",
       "status": "verified",
@@ -65,17 +65,17 @@
   ],
   "traces": [
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-trace-001",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-trace-001",
       "surfaceId": "workSurface.traceStrip",
       "phase": "schema",
       "actor": "nodetrace",
       "status": "ok",
       "summary": "Applied generic SQLite trace schema",
       "durationMs": 13,
-      "createdAt": "2026-06-17T02:55:21.557Z"
+      "createdAt": "2026-06-17T03:17:12.183Z"
     },
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-trace-002",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-trace-002",
       "surfaceId": "workSurface.evidenceCarousel",
       "artifactId": "demo-artifact",
       "elementId": "evidence-card-001",
@@ -84,27 +84,27 @@
       "status": "ok",
       "summary": "Inserted source-backed business proof",
       "durationMs": 17,
-      "createdAt": "2026-06-17T02:55:21.557Z"
+      "createdAt": "2026-06-17T03:17:12.183Z"
     },
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-trace-003",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-trace-003",
       "surfaceId": "copilot.agentOperationStream",
       "phase": "events",
       "actor": "nodetrace",
       "status": "ok",
       "summary": "Wrote bounded runtime trace rows",
       "durationMs": 8,
-      "createdAt": "2026-06-17T02:55:21.557Z"
+      "createdAt": "2026-06-17T03:17:12.183Z"
     },
     {
-      "id": "nodetrace-2026-06-17T02-55-21-557Z-trace-004",
+      "id": "nodetrace-2026-06-17T03-17-12-183Z-trace-004",
       "surfaceId": "shell.statusStrip",
       "phase": "state",
       "actor": "nodetrace",
       "status": "ok",
       "summary": "Published client-safe trace state JSON",
       "durationMs": 11,
-      "createdAt": "2026-06-17T02:55:21.557Z"
+      "createdAt": "2026-06-17T03:17:12.183Z"
     }
   ],
   "codeOwnership": []

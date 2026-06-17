@@ -24,6 +24,8 @@ if (issues.length === 0) {
   const provider = readFileSync("src/trace/TraceLensProvider.tsx", "utf8");
   const panel = readFileSync("src/trace/TraceLensPanel.tsx", "utf8");
   const schema = readFileSync("db/schema.sql", "utf8");
+  const readme = readFileSync("README.md", "utf8");
+  const walkthrough = readFileSync("docs/WALKTHROUGH.md", "utf8");
   for (const required of ["surfaces", "proofs", "traces", "builderCapable"]) {
     if (!(required in state)) issues.push(`state missing ${required}`);
   }
@@ -35,6 +37,15 @@ if (issues.length === 0) {
   }
   for (const table of ["trace_sessions", "trace_surfaces", "trace_proofs", "trace_events", "trace_code_ownership"]) {
     if (!schema.includes(table)) issues.push(`schema missing ${table}`);
+  }
+  for (const required of ["docs/WALKTHROUGH.md", "nodetrace-dashboard.png", "nodetrace-trace-lens.png"]) {
+    if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
+  }
+  for (const required of ["Visual Walkthrough", "nodetrace-dashboard.png", "nodetrace-trace-lens.png", "npx nodetrace add", "setup-receipt.json"]) {
+    if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
+  }
+  for (const file of ["docs/screenshots/nodetrace-dashboard.png", "docs/screenshots/nodetrace-trace-lens.png"]) {
+    if (!existsSync(file)) issues.push(`missing ${file}`);
   }
 }
 

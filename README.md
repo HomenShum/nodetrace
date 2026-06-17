@@ -8,6 +8,8 @@ trace rows, gated code ownership, and a local SQLite happy path. It is not bound
 to NodeAgent's agent architecture. Bring your own agent, tools, queue, database,
 or model provider.
 
+[Visual walkthrough](docs/WALKTHROUGH.md) · [Porting guide](docs/PORTING.md)
+
 ## Happy Path
 
 ```bash
@@ -25,6 +27,8 @@ creates:
 - `docs/eval/nodetrace-happy-path.json`
 
 Open the Vite URL and Cmd/Ctrl-click any tagged surface to open Trace Lens.
+
+![NodeTrace dashboard overview](docs/screenshots/nodetrace-dashboard.png)
 
 ## Add To An Existing App
 
@@ -57,6 +61,14 @@ npm run nodetrace:dev
 ```
 
 Open `/nodetrace.html` on the Vite URL. No API keys are required.
+
+## Visual Walkthrough
+
+The full screenshot walkthrough is in [`docs/WALKTHROUGH.md`](docs/WALKTHROUGH.md).
+
+Cmd/Ctrl-click any tagged surface to open Trace Lens:
+
+![NodeTrace Trace Lens overlay](docs/screenshots/nodetrace-trace-lens.png)
 
 ## What You Get
 
