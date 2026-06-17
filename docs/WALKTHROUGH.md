@@ -121,7 +121,8 @@ Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
 Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
-Run npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, generated source/UI captures, or minimap graph.
+Run npm run understand:noderoom before npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, generated source/UI captures, or minimap graph.
+Confirm docs/eval/nodetrace-understand-anything-noderoom.json says ok true and public/captures/noderoom-trace-knowledge-graph.json is Understand-Anything-backed.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

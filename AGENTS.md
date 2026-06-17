@@ -11,6 +11,18 @@ npm run smoke
 npm run build
 ```
 
+When changing the NodeRoom Trace Coach sample, also run the full local proof:
+
+```bash
+npm run understand:noderoom
+npm run trace-coach:sqlite
+```
+
+`understand:noderoom` must produce
+`docs/eval/nodetrace-understand-anything-noderoom.json` and refresh
+`public/captures/noderoom-trace-knowledge-graph.json` from Understand-Anything
+deterministic scripts, not a hand-modeled graph.
+
 Rules:
 
 - Keep `src/trace` portable. Do not import app-specific stores or agent runtimes.
@@ -20,3 +32,4 @@ Rules:
 - Support `data-nodetrace-surface` and the NodeRoom-compatible `data-noderoom-surface`.
 - Keep the SQLite schema generic so any app can insert trace sessions, surfaces, proofs, and events.
 - Keep `bin/nodetrace.mjs add` fully automatic: copy files, patch package scripts, install deps, run happy path, run smoke, run build when available, and write `.nodetrace/setup-receipt.json`.
+- Keep Trace Coach instructions coding-agent friendly: explicit commands, expected output files, no hidden API keys, and a visual result a new project can compare against.

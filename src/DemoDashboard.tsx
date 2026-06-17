@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Activity, ArrowRight, CheckCircle2, CircleDot, Code2, Database, FileJson, FileSearch, GitBranch, Image, KeyRound, Layers3, ListChecks, Map, Network, Play, Route, ShieldCheck, Terminal } from "lucide-react";
+import { Activity, ArrowRight, CheckCircle2, CircleDot, Code2, Database, FileJson, Image, KeyRound, Layers3, ListChecks, Map, Network, Play, Route, ShieldCheck, Terminal } from "lucide-react";
 import { DEFAULT_SURFACES, TraceLensPanel, TraceLensProvider, type NodeTraceState, type TraceCoachState, type TraceCoachStep } from "./trace";
 
 type CoachTab = "overview" | "steps" | "flow" | "raw";
@@ -25,6 +25,7 @@ export function DemoDashboard() {
   const [coachTab, setCoachTab] = useState<CoachTab>("overview");
   const latestTrace = state.traces.at(-1);
   const coach = state.coach;
+  const recentTraceRows = useMemo(() => state.traces.slice(-8).reverse(), [state.traces]);
   const activeCoachStep = useMemo(
     () => coach?.steps.find((step) => step.id === activeCoachStepId) ?? coach?.steps.find((step) => step.id === coach.activeStepId) ?? coach?.steps[0],
     [activeCoachStepId, coach],
@@ -54,6 +55,11 @@ export function DemoDashboard() {
     ],
     [coach],
   );
+  const proofSteps = [
+    { label: "Understand graph", detail: "UA deterministic scripts", done: Boolean(coach) },
+    { label: "SQLite seed", detail: ".nodetrace local runtime", done: state.session.status === "verified" },
+    { label: "Readable trace UI", detail: `${state.traces.length} bounded rows`, done: state.traces.length > 0 },
+  ];
 
   return (
     <TraceLensProvider builderCapable={state.builderCapable}>
@@ -66,18 +72,19 @@ export function DemoDashboard() {
               <span>portable trace kit</span>
             </div>
           </div>
-          <nav>
-            <button type="button" className="active">
-              <FileSearch size={17} aria-hidden="true" /> Trace Lens
-            </button>
-            <button type="button">
-              <Database size={17} aria-hidden="true" /> SQLite
-            </button>
-            <button type="button">
-              <GitBranch size={17} aria-hidden="true" /> Porting
-            </button>
-          </nav>
-          <p>Cmd/Ctrl-click a tagged surface to inspect proof, runtime trace, and gated ownership.</p>
+          <div className="railProof" aria-label="Local proof path">
+            <p className="eyebrow">Local proof</p>
+            {proofSteps.map((step) => (
+              <div key={step.label} className="railProofStep" data-done={String(step.done)}>
+                <CheckCircle2 size={15} aria-hidden="true" />
+                <span>
+                  <strong>{step.label}</strong>
+                  <small>{step.detail}</small>
+                </span>
+              </div>
+            ))}
+          </div>
+          <p>Cmd/Ctrl-click a tagged trace region to inspect proof, runtime trace, and gated ownership.</p>
         </aside>
 
         <section className="workspace">
@@ -140,25 +147,30 @@ export function DemoDashboard() {
             />
           ) : null}
 
-          <section className="surfaceBand" aria-label="Inspectable surfaces">
-            <div className="surfaceBandHead">
-              <p className="eyebrow">Inspectable surfaces</p>
-              <h2>Every card below is part of the trace contract.</h2>
-            </div>
-            <div className="surfaceGrid">
-              {state.surfaces.map((surface) => (
-                <article
-                  key={surface.id}
-                  className="surface"
-                  data-nodetrace-surface={surface.id}
-                  data-artifact-id={surface.id === "workSurface.evidenceCarousel" ? "seed-artifact" : undefined}
-                >
-                  <span>{surface.proofAvailable ? "proof" : "context"}</span>
-                  <h2>{surface.label}</h2>
-                  <p>{surface.about}</p>
-                </article>
+          <section className="tracePreview" data-nodetrace-surface="copilot.agentOperationStream">
+            <header className="tracePreviewHead">
+              <div>
+                <p className="eyebrow">Runtime trace</p>
+                <h2>Recent agent-readable rows</h2>
+                <p>Bounded local rows with phase, actor, duration, and the linked UI surface.</p>
+              </div>
+              <span>{state.traces.length} rows</span>
+            </header>
+            <ol className="traceTimeline">
+              {recentTraceRows.map((trace) => (
+                <li key={trace.id} data-element-id={trace.id} data-status={trace.status}>
+                  <span className="tracePhase">{trace.phase}</span>
+                  <span className="traceBody">
+                    <strong>{trace.summary}</strong>
+                    <small>{trace.surfaceId}{trace.elementId ? ` / ${trace.elementId}` : ""}</small>
+                  </span>
+                  <span className="traceMeta">
+                    <b>{trace.actor}</b>
+                    <em>{trace.durationMs}ms</em>
+                  </span>
+                </li>
               ))}
-            </div>
+            </ol>
           </section>
 
           <section className="statusGrid" aria-label="Happy path status">
@@ -170,22 +182,6 @@ export function DemoDashboard() {
                 <small>{detail}</small>
               </article>
             ))}
-          </section>
-
-          <section className="tracePreview" data-nodetrace-surface="copilot.agentOperationStream">
-            <div>
-              <p className="eyebrow">Runtime trace</p>
-              <h2>Recent rows</h2>
-            </div>
-            <ol>
-              {state.traces.slice(-4).reverse().map((trace) => (
-                <li key={trace.id} data-element-id={trace.id}>
-                  <span>{trace.phase}</span>
-                  <strong>{trace.summary}</strong>
-                  <em>{trace.actor} - {trace.durationMs}ms</em>
-                </li>
-              ))}
-            </ol>
           </section>
 
         </section>

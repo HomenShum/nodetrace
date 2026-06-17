@@ -27,6 +27,7 @@ if (issues.length === 0) {
   const readme = readFileSync("README.md", "utf8");
   const walkthrough = readFileSync("docs/WALKTHROUGH.md", "utf8");
   const porting = readFileSync("docs/PORTING.md", "utf8");
+  const agentNotes = readFileSync("AGENTS.md", "utf8");
   const coachGraph = JSON.parse(readFileSync("public/captures/noderoom-trace-knowledge-graph.json", "utf8"));
   const coachReport = JSON.parse(readFileSync("docs/eval/nodetrace-trace-coach-sqlite.json", "utf8"));
   for (const required of ["surfaces", "proofs", "traces", "builderCapable"]) {
@@ -72,6 +73,17 @@ if (issues.length === 0) {
     const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
     const styles = readFileSync("src/styles.css", "utf8");
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`coach UI missing ${required}`);
+  }
+  const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
+  const styles = readFileSync("src/styles.css", "utf8");
+  for (const forbidden of ["Inspectable surfaces", "surfaceBand", "surfaceGrid"]) {
+    if (dashboard.includes(forbidden) || styles.includes(forbidden)) issues.push(`noninteractive surface grid still present: ${forbidden}`);
+  }
+  for (const required of ["--bg-app: #f5f7fb", "railProof", "traceTimeline", "Recent agent-readable rows"]) {
+    if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`light/readable trace UI missing ${required}`);
+  }
+  for (const required of ["npm run understand:noderoom", "docs/eval/nodetrace-understand-anything-noderoom.json", "not a hand-modeled graph"]) {
+    if (!agentNotes.includes(required)) issues.push(`AGENTS.md missing ${required}`);
   }
   const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
   for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-backed", "loadUnderstandAnythingGraph"]) {
