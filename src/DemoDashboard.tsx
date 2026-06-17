@@ -50,7 +50,7 @@ export function DemoDashboard() {
     () => [
       { detail: coach?.sourceMode ?? "local", label: "Source repo", value: coach?.sourceRepo ?? "portable" },
       { detail: "ordered labels", label: "Coach steps", value: String(coach?.steps.length ?? 0) },
-      { detail: "overview, steps, flow, raw", label: "Trace tabs", value: "4" },
+      { detail: "overview, steps, minimap, raw", label: "Trace tabs", value: "4" },
     ],
     [coach],
   );
@@ -207,16 +207,10 @@ function TraceCoachPanel({
 }) {
   const activeNodeId = activeStep.diagram.nodeId;
   const rect = activeStep.uiCapture.rect;
-  const rectStyle = {
-    left: `${(rect.x / 1080) * 100}%`,
-    top: `${(rect.y / 620) * 100}%`,
-    width: `${(rect.width / 1080) * 100}%`,
-    height: `${(rect.height / 620) * 100}%`,
-  };
   const tabs: Array<{ id: CoachTab; label: string; Icon: typeof ListChecks }> = [
     { id: "overview", label: "Overview", Icon: ListChecks },
     { id: "steps", label: "Steps", Icon: Code2 },
-    { id: "flow", label: "Flow", Icon: Network },
+    { id: "flow", label: "Minimap", Icon: Network },
     { id: "raw", label: "Raw JSON", Icon: FileJson },
   ];
   const rawPayload = {
@@ -284,12 +278,12 @@ function TraceCoachPanel({
               <section className="coachPane codePane" aria-label="Code slice">
                 <div className="paneTitle">
                   <Code2 size={17} aria-hidden="true" />
-                  <span>{activeStep.codeBlock.filePath}</span>
+                  <span>{activeStep.sourceView.activeFile}</span>
                 </div>
                 <small>
-                  lines {activeStep.codeBlock.startLine}-{activeStep.codeBlock.endLine}
+                  {activeStep.sourceView.repositoryRoot} - lines {activeStep.sourceView.highlightStartLine}-{activeStep.sourceView.highlightEndLine}
                 </small>
-                <pre>{activeStep.codeBlock.snippet}</pre>
+                <img className="evidenceShot ideShot" src={assetPath(activeStep.sourceView.imagePath)} alt={`IDE recomposition for ${activeStep.sourceView.activeFile}`} />
               </section>
 
               <section className="coachPane uiPane" aria-label="UI capture">
@@ -297,17 +291,10 @@ function TraceCoachPanel({
                   <Image size={17} aria-hidden="true" />
                   <span>{activeStep.uiCapture.selector}</span>
                 </div>
-                <div className="captureFrame">
-                  <div className="captureChrome">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <div className="captureBody">
-                    <div className="captureBox" style={rectStyle} />
-                    <p>{activeStep.uiCapture.alt}</p>
-                  </div>
-                </div>
+                <small>
+                  DOMRect x{rect.x} y{rect.y} w{rect.width} h{rect.height}
+                </small>
+                <img className="evidenceShot uiShot" src={assetPath(activeStep.uiCapture.screenshotPath)} alt={activeStep.uiCapture.alt} />
               </section>
             </div>
           ) : null}
@@ -346,8 +333,12 @@ function TraceCoachPanel({
             <section className="coachPane mapPane" aria-label="Trace coach flow">
               <div className="paneTitle">
                 <Map size={17} aria-hidden="true" />
-                <span>{coach.graphNodes.length} nodes - {coach.graphEdges.length} edges</span>
+                <span>{activeStep.mapCapture.model}</span>
               </div>
+              <small>
+                {coach.graphNodes.length} nodes - {coach.graphEdges.length} edges - {activeStep.mapCapture.graphPath}
+              </small>
+              <img className="evidenceShot mapShot" src={assetPath(activeStep.mapCapture.imagePath)} alt={`Codebase minimap focused on ${activeStep.diagram.nodeId}`} />
               <div className="graphNodes">
                 {coach.graphNodes.map((node) => (
                   <span key={node.id} className={node.id === activeNodeId ? "active" : ""}>
@@ -379,4 +370,8 @@ function groupCoachSteps(steps: TraceCoachStep[]): Record<string, TraceCoachStep
     groups[group] = [...(groups[group] ?? []), step];
     return groups;
   }, {});
+}
+
+function assetPath(path: string) {
+  return path.startsWith("/") ? path : `/${path}`;
 }

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img">
+<style>text{font-family:Inter,Segoe UI,Arial,sans-serif}.mono{font-family:Consolas,Menlo,monospace}</style>
+
+    <rect width="1200" height="720" rx="24" fill="#0b0f14"/>
+    <rect x="24" y="24" width="1152" height="672" rx="18" fill="#101317" stroke="#2b333d"/>
+    <rect x="24" y="24" width="1152" height="46" rx="18" fill="#171b21"/>
+    <circle cx="52" cy="47" r="6" fill="#e87855"/><circle cx="72" cy="47" r="6" fill="#e5b567"/><circle cx="92" cy="47" r="6" fill="#78d39f"/>
+    <text x="120" y="52" fill="#f2f4f7" font-size="14" font-weight="700">Visual Studio Code recomposition - HomenShum/noderoom</text>
+    <rect x="24" y="70" width="244" height="626" fill="#0d1014"/>
+    <text x="42" y="100" fill="#ffb195" font-size="12" font-weight="800">EXPLORER</text>
+    <text x="48" y="128" fill="#aab3be" font-size="12">src</text>
+<text x="48" y="152" fill="#aab3be" font-size="12">  - ui</text>
+<text x="48" y="176" fill="#aab3be" font-size="12">    - panels</text>
+<rect x="36" y="183" width="210" height="24" rx="6" fill="rgba(232,120,85,0.18)" stroke="rgba(232,120,85,0.48)"/><text x="48" y="200" fill="#ffb195" font-size="12">      - TraceStepRow.tsx</text>
+    <rect x="268" y="70" width="908" height="626" fill="#0d1117"/>
+    <rect x="288" y="88" width="360" height="28" rx="8" fill="#171b21" stroke="#333b46"/>
+    <text x="304" y="107" fill="#f2f4f7" font-size="12" font-weight="700">src/ui/panels/TraceStepRow.tsx</text>
+    <text x="982" y="107" fill="#99a3ae" font-size="11">lines 18-46</text>
+    <rect x="284" y="128" width="34" height="520" fill="#0b0f14"/>
+    <rect x="340" y="128" width="2" height="520" fill="#252b33"/>
+    <rect x="344" y="103" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="116" fill="#76808c" font-size="12">  18</text><text x="352" y="116" fill="#e5eaf0" font-size="12">      &lt;span className=&quot;r-tracevu-step-body&quot;&gt;</text>
+<rect x="344" y="121" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="134" fill="#76808c" font-size="12">  19</text><text x="352" y="134" fill="#e5eaf0" font-size="12">        &lt;span className=&quot;r-tracevu-step-label&quot;&gt;</text>
+<rect x="344" y="139" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="152" fill="#76808c" font-size="12">  20</text><text x="352" y="152" fill="#e5eaf0" font-size="12">          {s.label}</text>
+<rect x="344" y="157" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="170" fill="#76808c" font-size="12">  21</text><text x="352" y="170" fill="#e5eaf0" font-size="12">          {ssims.map((a, i) =&gt; &lt;span key={i} className=&quot;r-tracevu-ssim&quot; data-flicker={String(a.dif</text>
+<rect x="344" y="175" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="188" fill="#76808c" font-size="12">  22</text><text x="352" y="188" fill="#e5eaf0" font-size="12">          {s.targetArtifactId &amp;&amp; &lt;ArrowUpRight size={11} /&gt;}</text>
+<rect x="344" y="193" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="206" fill="#76808c" font-size="12">  23</text><text x="352" y="206" fill="#e5eaf0" font-size="12">        &lt;/span&gt;</text>
+<rect x="344" y="211" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/><text x="292" y="224" fill="#76808c" font-size="12">  24</text><text x="352" y="224" fill="#e5eaf0" font-size="12">        {s.detail &amp;&amp; &lt;span className=&quot;r-tracevu-step-detail&quot;&gt;{s.detail}&lt;/span&gt;}</text>
+<text x="292" y="242" fill="#76808c" font-size="12">  25</text><text x="352" y="242" fill="#e5eaf0" font-size="12">        {s.screenshotUrl &amp;&amp; (</text>
+<text x="292" y="260" fill="#76808c" font-size="12">  26</text><text x="352" y="260" fill="#e5eaf0" font-size="12">          &lt;a className=&quot;r-tracevu-shotlink&quot; href={s.screenshotUrl} target=&quot;_blank&quot; rel=&quot;noopener n</text>
+<text x="292" y="278" fill="#76808c" font-size="12">  27</text><text x="352" y="278" fill="#e5eaf0" font-size="12">            &lt;span className=&quot;r-tracevu-shotframe&quot;&gt;&lt;img className=&quot;r-tracevu-shot&quot; src={s.screensho</text>
+<text x="292" y="296" fill="#76808c" font-size="12">  28</text><text x="352" y="296" fill="#e5eaf0" font-size="12">          &lt;/a&gt;</text>
+<text x="292" y="314" fill="#76808c" font-size="12">  29</text><text x="352" y="314" fill="#e5eaf0" font-size="12">        )}</text>
+<text x="292" y="332" fill="#76808c" font-size="12">  30</text><text x="352" y="332" fill="#e5eaf0" font-size="12">        {shots.map((a, i) =&gt; (</text>
+<text x="292" y="350" fill="#76808c" font-size="12">  31</text><text x="352" y="350" fill="#e5eaf0" font-size="12">          &lt;a key={i} className=&quot;r-tracevu-shotlink&quot; href={a.url} target=&quot;_blank&quot; rel=&quot;noopener nor</text>
+<text x="292" y="368" fill="#76808c" font-size="12">  32</text><text x="352" y="368" fill="#e5eaf0" font-size="12">            &lt;span className=&quot;r-tracevu-shotframe&quot;&gt;</text>
+<text x="292" y="386" fill="#76808c" font-size="12">  33</text><text x="352" y="386" fill="#e5eaf0" font-size="12">              &lt;img className=&quot;r-tracevu-shot&quot; src={a.url} alt={a.label ?? s.label} loading=&quot;lazy&quot; </text>
+<text x="292" y="404" fill="#76808c" font-size="12">  34</text><text x="352" y="404" fill="#e5eaf0" font-size="12">              {a.box &amp;&amp; &lt;span className=&quot;r-tracevu-box&quot; style={{ left: `${a.box.x * 100}%`, top: `</text>
+<text x="292" y="422" fill="#76808c" font-size="12">  35</text><text x="352" y="422" fill="#e5eaf0" font-size="12">            &lt;/span&gt;</text>
+<text x="292" y="440" fill="#76808c" font-size="12">  36</text><text x="352" y="440" fill="#e5eaf0" font-size="12">          &lt;/a&gt;</text>
+<text x="292" y="458" fill="#76808c" font-size="12">  37</text><text x="352" y="458" fill="#e5eaf0" font-size="12">        ))}</text>
+<text x="292" y="476" fill="#76808c" font-size="12">  38</text><text x="352" y="476" fill="#e5eaf0" font-size="12">        {logs.map((a, i) =&gt; &lt;pre key={i} className=&quot;r-tracevu-log&quot;&gt;{a.text}&lt;/pre&gt;)}</text>
+<text x="292" y="494" fill="#76808c" font-size="12">  39</text><text x="352" y="494" fill="#e5eaf0" font-size="12">        {s.metrics &amp;&amp; (</text>
+<text x="292" y="512" fill="#76808c" font-size="12">  40</text><text x="352" y="512" fill="#e5eaf0" font-size="12">          &lt;span className=&quot;r-tracevu-metrics&quot;&gt;</text>
+<text x="292" y="530" fill="#76808c" font-size="12">  41</text><text x="352" y="530" fill="#e5eaf0" font-size="12">            {s.metrics.map((m) =&gt; &lt;span key={m.label}&gt;&lt;b&gt;{m.value}&lt;/b&gt; {m.label}&lt;/span&gt;)}</text>
+    <rect x="1060" y="142" width="68" height="360" rx="6" fill="#111820" stroke="#252b33"/>
+    <rect x="1072" y="162" width="44" height="112" rx="4" fill="rgba(232,120,85,0.32)"/>
+    <text x="292" y="676" fill="#7cc7ff" font-size="12">Exact source slice from src/ui/panels/TraceStepRow.tsx. Generated by NodeTrace; no editor automation required.</text>
+  
+</svg>

@@ -67,6 +67,14 @@ export interface TraceCoachStep {
   title: string;
   narrative: string;
   surfaceId: string;
+  sourceView: {
+    imagePath: string;
+    repositoryRoot: string;
+    activeFile: string;
+    folderTree: string[];
+    highlightStartLine: number;
+    highlightEndLine: number;
+  };
   codeBlock: {
     filePath: string;
     startLine: number;
@@ -79,6 +87,11 @@ export interface TraceCoachStep {
     screenshotPath: string;
     alt: string;
   };
+  mapCapture: {
+    imagePath: string;
+    graphPath: string;
+    model: string;
+  };
   diagram: {
     kind: "mermaid" | "sequence" | "graph";
     nodeId: string;
@@ -90,6 +103,11 @@ export interface TraceCoachGraphNode {
   id: string;
   label: string;
   kind: "schema" | "query" | "mutation" | "component" | "effect" | "runtime";
+  filePath?: string;
+  layer?: string;
+  x?: number;
+  y?: number;
+  summary?: string;
 }
 
 export interface TraceCoachGraphEdge {

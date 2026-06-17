@@ -35,16 +35,22 @@ The script writes:
 
 - `.nodetrace/trace-coach.sqlite`
 - `public/nodetrace-state.json`
+- `public/captures/*-ide.svg`
+- `public/captures/*-ui.svg`
+- `public/captures/*-minimap.svg`
+- `public/captures/noderoom-trace-knowledge-graph.json`
 - `docs/eval/nodetrace-trace-coach-sqlite.json`
 
 The demo dashboard then renders a NodeRoom-style Trace Coach surface with:
 
 - a left trace-record list
-- detail tabs for Overview, Steps, Flow, and Raw JSON
+- detail tabs for Overview, Steps, Minimap, and Raw JSON
 - ordered step labels, not video timestamps
 - real NodeRoom code slices
-- UI capture metadata with `data-noderoom-*` selectors, DOMRect, screenshot path, and bounding box
+- IDE/source recompositions with the accurate folder path and highlighted code section
+- UI target callout images with `data-noderoom-*` selectors, DOMRect, screenshot path, and bounding box
 - Mermaid flow source for the active step
+- an Understand-Anything-style minimap backed by `noderoom-trace-knowledge-graph.json`
 
 ## Visual Proof
 
@@ -53,31 +59,39 @@ trace surface:
 
 ![NodeRoom-style Trace Coach tabs](../../docs/eval/nodetrace-trace-coach-sqlite.png)
 
+The minimap tab should show a codebase graph focused on the active trace node:
+
+![NodeRoom Trace Coach minimap](../../docs/eval/nodetrace-trace-coach-minimap.png)
+
 ## Why This Shape
 
 The capture model is structural:
 
 ```text
 NodeRoom source path + line range
+generated IDE/source screenshot
 NodeRoom UI selector + DOMRect
-screenshotPath for a Playwright capture worker
-Mermaid source for the active flow tab
+generated UI target screenshot
+Understand-Anything-style graph JSON and minimap screenshot
+Mermaid source for the active minimap tab
 ```
 
 That means a coding agent can adapt the example to another repo by changing
-anchors and selectors, then using Playwright to populate real screenshot files.
-The trace UI does not need raw IDE screenshots or video timestamps to display
-the guided codebase trace.
+anchors and selectors, then either keeping the deterministic SVG generator or
+replacing those assets with real Playwright/IDE screenshots. The trace UI does
+not need video timestamps to display the guided codebase trace.
 
 ## Coding-Agent Prompt
 
 ```text
 Create a NodeTrace Trace Coach walkthrough for this repo. Base every step on
 real files in the codebase, not invented examples. Follow the NodeRoom trace-tab
-shape: record list, Overview, Steps, Flow, and Raw JSON. Use ordered step labels,
+shape: record list, Overview, Steps, Minimap, and Raw JSON. Use ordered step labels,
 not video timestamps. For each step, provide codeBlock.filePath, startLine,
 endLine, snippet, uiCapture.selector, uiCapture.rect, uiCapture.screenshotPath,
-and diagram.source. Keep the first pass local and SQLite-backed. Run
+sourceView.imagePath, mapCapture.imagePath, mapCapture.graphPath, and
+diagram.source. Generate or capture visual assets for the IDE/source slice, UI
+target callout, and minimap. Keep the first pass local and SQLite-backed. Run
 npm run trace-coach:sqlite, npm run smoke, and npm run build.
 ```
 

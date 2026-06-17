@@ -14,6 +14,7 @@ const options = parseArgs(process.argv.slice(2));
 const dbPath = resolve(options.db ?? process.env.NODETRACE_DB_PATH ?? ".nodetrace/trace-coach.sqlite");
 const statePath = resolve(options.state ?? process.env.NODETRACE_STATE_PATH ?? "public/nodetrace-state.json");
 const reportPath = resolve(options["json-out"] ?? "docs/eval/nodetrace-trace-coach-sqlite.json");
+const captureRoot = resolve(options["capture-root"] ?? process.env.NODETRACE_CAPTURE_ROOT ?? "public/captures");
 const sourceRoot = resolve(options["source-root"] ?? process.env.NODETRACE_SOURCE_ROOT ?? "..");
 const startedAt = new Date();
 const startedMs = performance.now();
@@ -21,6 +22,7 @@ const startedMs = performance.now();
 mkdirSync(dirname(dbPath), { recursive: true });
 mkdirSync(dirname(statePath), { recursive: true });
 mkdirSync(dirname(reportPath), { recursive: true });
+mkdirSync(captureRoot, { recursive: true });
 
 const db = new Database(dbPath);
 db.pragma("foreign_keys = ON");
@@ -78,12 +80,66 @@ const surfaces = [
 ];
 
 const graphNodes = [
-  { id: "artifact", label: "Artifact trace tab", kind: "component" },
-  { id: "surface", label: "TraceSurface", kind: "component" },
-  { id: "data", label: "traceData", kind: "schema" },
-  { id: "steps", label: "StepRow", kind: "component" },
-  { id: "flow", label: "TraceFlow", kind: "component" },
-  { id: "style", label: "NodeRoom CSS", kind: "runtime" },
+  {
+    id: "artifact",
+    label: "Artifact shell",
+    kind: "component",
+    filePath: "src/ui/panels/Artifact.tsx",
+    layer: "UI entry",
+    x: 112,
+    y: 250,
+    summary: "Entry point that exposes the room trace strip.",
+  },
+  {
+    id: "surface",
+    label: "TraceSurface",
+    kind: "component",
+    filePath: "src/ui/panels/TraceSurface.tsx",
+    layer: "Trace UI",
+    x: 332,
+    y: 176,
+    summary: "Master-detail trace tab with records, tabs, and active detail.",
+  },
+  {
+    id: "data",
+    label: "traceData",
+    kind: "schema",
+    filePath: "src/ui/panels/traceData.ts",
+    layer: "Data model",
+    x: 332,
+    y: 382,
+    summary: "TraceRecord and TraceStep structures that feed the UI.",
+  },
+  {
+    id: "steps",
+    label: "TraceStepRow",
+    kind: "component",
+    filePath: "src/ui/panels/TraceStepRow.tsx",
+    layer: "Evidence UI",
+    x: 560,
+    y: 286,
+    summary: "Step renderer for source-linked rows and screenshot boxes.",
+  },
+  {
+    id: "flow",
+    label: "TraceFlow",
+    kind: "component",
+    filePath: "src/ui/panels/TraceFlow.tsx",
+    layer: "Graph UI",
+    x: 784,
+    y: 190,
+    summary: "Graph view over the same ordered trace steps.",
+  },
+  {
+    id: "style",
+    label: "Trace CSS",
+    kind: "runtime",
+    filePath: "src/app/styles.css",
+    layer: "Visual system",
+    x: 790,
+    y: 406,
+    summary: "Dark trace surface, tabs, cards, and highlighted boxes.",
+  },
 ];
 
 const graphEdges = [
@@ -95,7 +151,7 @@ const graphEdges = [
   { id: "flow-style", from: "flow", to: "style", label: "uses dark graph shell" },
 ];
 
-const coachSteps = [
+const baseCoachSteps = [
   {
     id: "coach-step-01-artifact-entry",
     order: 1,
@@ -109,7 +165,7 @@ const coachSteps = [
     uiCapture: {
       selector: '[data-noderoom-surface="workSurface.traceStrip"]',
       rect: { x: 184, y: 1086, width: 700, height: 210 },
-      screenshotPath: "captures/noderoom-room-trace-strip.png",
+      screenshotPath: "captures/noderoom-room-trace-strip.svg",
       alt: "NodeRoom bottom room trace strip with recent room events and trace telemetry.",
     },
     diagram: {
@@ -132,7 +188,7 @@ const coachSteps = [
     uiCapture: {
       selector: '[data-testid="trace-surface"] .r-tracevu-tabs',
       rect: { x: 548, y: 118, width: 354, height: 42 },
-      screenshotPath: "captures/noderoom-trace-detail-tabs.png",
+      screenshotPath: "captures/noderoom-trace-detail-tabs.svg",
       alt: "NodeRoom trace detail tabs for Overview, Steps, Flow, Evidence, and Raw JSON.",
     },
     diagram: {
@@ -155,7 +211,7 @@ const coachSteps = [
     uiCapture: {
       selector: '[data-testid="trace-record"]',
       rect: { x: 20, y: 160, width: 300, height: 108 },
-      screenshotPath: "captures/noderoom-trace-record-list.png",
+      screenshotPath: "captures/noderoom-trace-record-list.svg",
       alt: "NodeRoom trace record list showing source, step count, and verdict pills.",
     },
     diagram: {
@@ -178,7 +234,7 @@ const coachSteps = [
     uiCapture: {
       selector: '[data-testid="trace-step"] .r-tracevu-shotframe',
       rect: { x: 410, y: 310, width: 454, height: 256 },
-      screenshotPath: "captures/noderoom-trace-step-box.png",
+      screenshotPath: "captures/noderoom-trace-step-box.svg",
       alt: "NodeRoom trace step screenshot frame with a highlighted bounding box overlay.",
     },
     diagram: {
@@ -201,7 +257,7 @@ const coachSteps = [
     uiCapture: {
       selector: '[data-testid="trace-flow"]',
       rect: { x: 336, y: 184, width: 760, height: 456 },
-      screenshotPath: "captures/noderoom-trace-flow.png",
+      screenshotPath: "captures/noderoom-trace-flow.svg",
       alt: "NodeRoom trace flow graph with grouped phases, animated edges, controls, and minimap.",
     },
     diagram: {
@@ -224,7 +280,7 @@ const coachSteps = [
     uiCapture: {
       selector: ".r-tracevu",
       rect: { x: 170, y: 62, width: 690, height: 888 },
-      screenshotPath: "captures/noderoom-trace-surface-style.png",
+      screenshotPath: "captures/noderoom-trace-surface-style.svg",
       alt: "NodeRoom dark trace surface with record list, detail pane, tabs, and step cards.",
     },
     diagram: {
@@ -236,7 +292,30 @@ const coachSteps = [
   },
 ];
 
+const coachSteps = baseCoachSteps.map((step) => ({
+  ...step,
+  sourceView: {
+    imagePath: capturePath(`${step.id}-ide.svg`),
+    repositoryRoot: "HomenShum/noderoom",
+    activeFile: step.codeBlock.filePath,
+    folderTree: folderTreeFor(step.codeBlock.filePath),
+    highlightStartLine: step.codeBlock.startLine,
+    highlightEndLine: step.codeBlock.endLine,
+  },
+  uiCapture: {
+    ...step.uiCapture,
+    screenshotPath: capturePath(`${step.id}-ui.svg`),
+  },
+  mapCapture: {
+    imagePath: capturePath(`${step.id}-minimap.svg`),
+    graphPath: capturePath("noderoom-trace-knowledge-graph.json"),
+    model: "Understand-Anything-style structural minimap",
+  },
+}));
+
 const sourceMode = coachSteps.some((step) => step.codeBlock.sourceMode === "snapshot") ? "snapshot" : "live";
+
+writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode });
 
 const proofs = coachSteps.map((step) => ({
   id: `${step.id}-proof`,
@@ -388,9 +467,10 @@ const report = {
   coachSteps: coachSteps.length,
   graphNodes: graphNodes.length,
   graphEdges: graphEdges.length,
-  captureModel: "NodeRoom code path + data-noderoom selector + DOMRect + screenshotPath",
+  captureModel: "NodeRoom code path + generated IDE SVG + generated UI target SVG + data-noderoom selector + DOMRect + screenshotPath",
   onboardingModel: "ordered steps only; no video timestamps stored",
-  visualModel: "NodeRoom trace-tab look and feel",
+  visualModel: "NodeRoom trace-tab look and feel with Understand-Anything-style minimap",
+  captureAssets: coachSteps.length * 3 + 1,
 };
 writeJson(reportPath, report);
 db.close();
@@ -461,6 +541,189 @@ function writeJson(path, value) {
 
 function relativePath(path) {
   return relative(process.cwd(), path).replaceAll("\\", "/");
+}
+
+function capturePath(name) {
+  return `captures/${name}`;
+}
+
+function folderTreeFor(filePath) {
+  const parts = filePath.split("/");
+  return parts.map((part, index) => `${"  ".repeat(index)}${index === 0 ? "" : "- "}${part}`);
+}
+
+function writeCaptureAssets({ captureRoot, coachSteps, graphEdges, graphNodes, sourceMode }) {
+  const graph = {
+    generator: "nodetrace trace-coach:sqlite",
+    sourceRepo: "HomenShum/noderoom",
+    sourceMode,
+    model: "Understand-Anything-style codebase minimap",
+    note: "Portable subset of the NodeRoom trace UI graph. Swap this file for .understand-anything/knowledge-graph.json when running the full plugin.",
+    nodes: graphNodes,
+    edges: graphEdges,
+    guidedTour: coachSteps.map((step) => ({
+      id: step.id,
+      label: step.stepLabel,
+      nodeId: step.diagram.nodeId,
+      filePath: step.codeBlock.filePath,
+      selector: step.uiCapture.selector,
+      summary: step.title,
+    })),
+  };
+  writeJson(resolve(captureRoot, "noderoom-trace-knowledge-graph.json"), graph);
+  for (const step of coachSteps) {
+    writeFileSync(resolve(captureRoot, `${step.id}-ide.svg`), renderIdeSvg(step));
+    writeFileSync(resolve(captureRoot, `${step.id}-ui.svg`), renderUiTargetSvg(step));
+    writeFileSync(resolve(captureRoot, `${step.id}-minimap.svg`), renderMinimapSvg(step, graphNodes, graphEdges));
+  }
+}
+
+function renderIdeSvg(step) {
+  const codeLines = step.codeBlock.snippet.split(/\r?\n/).slice(0, 24);
+  const treeLines = step.sourceView.folderTree;
+  const activeName = step.codeBlock.filePath.split("/").at(-1);
+  const lineHeight = 18;
+  const codeY = 116;
+  const code = codeLines
+    .map((line, index) => {
+      const y = codeY + index * lineHeight;
+      const number = String(step.codeBlock.startLine + index).padStart(4, " ");
+      const escaped = escapeXml(line.slice(0, 98));
+      const isHot = index >= 0 && index <= Math.min(6, codeLines.length - 1);
+      return `${isHot ? `<rect x="344" y="${y - 13}" width="806" height="18" rx="4" fill="rgba(232,120,85,0.16)"/>` : ""}<text x="292" y="${y}" fill="#76808c" font-size="12">${number}</text><text x="352" y="${y}" fill="#e5eaf0" font-size="12">${escaped || " "}</text>`;
+    })
+    .join("\n");
+  const tree = treeLines
+    .map((line, index) => {
+      const y = 128 + index * 24;
+      const active = line.trim().endsWith(activeName);
+      return `${active ? `<rect x="36" y="${y - 17}" width="210" height="24" rx="6" fill="rgba(232,120,85,0.18)" stroke="rgba(232,120,85,0.48)"/>` : ""}<text x="48" y="${y}" fill="${active ? "#ffb195" : "#aab3be"}" font-size="12">${escapeXml(line)}</text>`;
+    })
+    .join("\n");
+  return svgFrame(`
+    <rect width="1200" height="720" rx="24" fill="#0b0f14"/>
+    <rect x="24" y="24" width="1152" height="672" rx="18" fill="#101317" stroke="#2b333d"/>
+    <rect x="24" y="24" width="1152" height="46" rx="18" fill="#171b21"/>
+    <circle cx="52" cy="47" r="6" fill="#e87855"/><circle cx="72" cy="47" r="6" fill="#e5b567"/><circle cx="92" cy="47" r="6" fill="#78d39f"/>
+    <text x="120" y="52" fill="#f2f4f7" font-size="14" font-weight="700">Visual Studio Code recomposition - ${escapeXml(step.sourceView.repositoryRoot)}</text>
+    <rect x="24" y="70" width="244" height="626" fill="#0d1014"/>
+    <text x="42" y="100" fill="#ffb195" font-size="12" font-weight="800">EXPLORER</text>
+    ${tree}
+    <rect x="268" y="70" width="908" height="626" fill="#0d1117"/>
+    <rect x="288" y="88" width="360" height="28" rx="8" fill="#171b21" stroke="#333b46"/>
+    <text x="304" y="107" fill="#f2f4f7" font-size="12" font-weight="700">${escapeXml(step.codeBlock.filePath)}</text>
+    <text x="982" y="107" fill="#99a3ae" font-size="11">lines ${step.codeBlock.startLine}-${step.codeBlock.endLine}</text>
+    <rect x="284" y="128" width="34" height="520" fill="#0b0f14"/>
+    <rect x="340" y="128" width="2" height="520" fill="#252b33"/>
+    ${code}
+    <rect x="1060" y="142" width="68" height="360" rx="6" fill="#111820" stroke="#252b33"/>
+    <rect x="1072" y="162" width="44" height="112" rx="4" fill="rgba(232,120,85,0.32)"/>
+    <text x="292" y="676" fill="#7cc7ff" font-size="12">Exact source slice from ${escapeXml(step.codeBlock.filePath)}. Generated by NodeTrace; no editor automation required.</text>
+  `);
+}
+
+function renderUiTargetSvg(step) {
+  const normalized = normalizeRect(step.uiCapture.rect);
+  return svgFrame(`
+    <rect width="1200" height="720" rx="24" fill="#080a0d"/>
+    <rect x="34" y="34" width="1132" height="652" rx="20" fill="#101317" stroke="#2b333d"/>
+    <rect x="34" y="34" width="1132" height="54" rx="20" fill="#171b21"/>
+    <text x="60" y="68" fill="#f2f4f7" font-size="15" font-weight="800">NodeRoom UI target recomposition</text>
+    <text x="910" y="68" fill="#99a3ae" font-size="12">selector: ${escapeXml(step.uiCapture.selector)}</text>
+    <rect x="60" y="114" width="252" height="532" rx="14" fill="#0d1014" stroke="#252b33"/>
+    <text x="84" y="148" fill="#ffb195" font-size="12" font-weight="800">TRACE RECORDS</text>
+    ${uiRecordRows(step)}
+    <rect x="336" y="114" width="796" height="532" rx="14" fill="#0d1117" stroke="#252b33"/>
+    <text x="362" y="154" fill="#f2f4f7" font-size="20" font-weight="800">${escapeXml(step.title)}</text>
+    <text x="362" y="184" fill="#99a3ae" font-size="13">${escapeXml(step.narrative.slice(0, 112))}</text>
+    <rect x="362" y="214" width="74" height="32" rx="8" fill="rgba(232,120,85,0.16)" stroke="rgba(232,120,85,0.46)"/>
+    <text x="384" y="235" fill="#ffb195" font-size="12" font-weight="800">Overview</text>
+    <rect x="448" y="214" width="58" height="32" rx="8" fill="#171b21"/><text x="466" y="235" fill="#c6ccd4" font-size="12">Steps</text>
+    <rect x="516" y="214" width="78" height="32" rx="8" fill="#171b21"/><text x="536" y="235" fill="#c6ccd4" font-size="12">Minimap</text>
+    <rect x="604" y="214" width="78" height="32" rx="8" fill="#171b21"/><text x="622" y="235" fill="#c6ccd4" font-size="12">Raw JSON</text>
+    <rect x="362" y="276" width="344" height="300" rx="12" fill="#171b21" stroke="#252b33"/>
+    <text x="384" y="314" fill="#f2f4f7" font-size="14" font-weight="800">Code evidence</text>
+    <text x="384" y="346" fill="#99a3ae" font-size="12">${escapeXml(step.codeBlock.filePath)}</text>
+    <rect x="734" y="276" width="370" height="300" rx="12" fill="#10151b" stroke="#252b33"/>
+    <text x="756" y="314" fill="#f2f4f7" font-size="14" font-weight="800">UI evidence</text>
+    <rect x="${normalized.x}" y="${normalized.y}" width="${normalized.width}" height="${normalized.height}" rx="8" fill="rgba(232,120,85,0.2)" stroke="#e87855" stroke-width="3"/>
+    <path d="M${normalized.x + normalized.width} ${normalized.y + 18} L1038 164" stroke="#e87855" stroke-width="2" fill="none"/>
+    <rect x="892" y="126" width="230" height="54" rx="10" fill="#271711" stroke="#e87855"/>
+    <text x="908" y="150" fill="#ffb195" font-size="12" font-weight="800">DOMRect target</text>
+    <text x="908" y="168" fill="#e5eaf0" font-size="11">x${step.uiCapture.rect.x} y${step.uiCapture.rect.y} w${step.uiCapture.rect.width} h${step.uiCapture.rect.height}</text>
+    <text x="60" y="674" fill="#7cc7ff" font-size="12">${escapeXml(step.uiCapture.alt)}</text>
+  `);
+}
+
+function renderMinimapSvg(step, graphNodes, graphEdges) {
+  const nodeById = new Map(graphNodes.map((node) => [node.id, node]));
+  const edges = graphEdges
+    .map((edge) => {
+      const from = nodeById.get(edge.from);
+      const to = nodeById.get(edge.to);
+      if (!from || !to) return "";
+      return `<path d="M${from.x + 116} ${from.y + 34} C${from.x + 170} ${from.y + 34}, ${to.x - 38} ${to.y + 34}, ${to.x} ${to.y + 34}" stroke="#3d4652" stroke-width="3" fill="none"/><text x="${(from.x + to.x) / 2 + 36}" y="${(from.y + to.y) / 2 + 24}" fill="#7f8994" font-size="10">${escapeXml(edge.label.slice(0, 28))}</text>`;
+    })
+    .join("\n");
+  const nodes = graphNodes
+    .map((node) => {
+      const active = node.id === step.diagram.nodeId;
+      return `<g>
+        <rect x="${node.x}" y="${node.y}" width="156" height="70" rx="14" fill="${active ? "rgba(232,120,85,0.22)" : "#171b21"}" stroke="${active ? "#e87855" : "#333b46"}" stroke-width="${active ? 3 : 1}"/>
+        <text x="${node.x + 14}" y="${node.y + 24}" fill="${active ? "#ffb195" : "#f2f4f7"}" font-size="13" font-weight="800">${escapeXml(node.label)}</text>
+        <text x="${node.x + 14}" y="${node.y + 44}" fill="#99a3ae" font-size="10">${escapeXml(node.layer)}</text>
+        <text x="${node.x + 14}" y="${node.y + 60}" fill="#7cc7ff" font-size="9">${escapeXml(node.filePath)}</text>
+      </g>`;
+    })
+    .join("\n");
+  return svgFrame(`
+    <rect width="1200" height="720" rx="24" fill="#080a0d"/>
+    <rect x="32" y="32" width="1136" height="656" rx="22" fill="#101317" stroke="#2b333d"/>
+    <text x="62" y="74" fill="#f2f4f7" font-size="18" font-weight="800">NodeRoom trace knowledge minimap</text>
+    <text x="62" y="98" fill="#99a3ae" font-size="12">Understand-Anything-style graph: layers, files, guided tour node, and current trace focus.</text>
+    <rect x="60" y="126" width="884" height="492" rx="18" fill="#0d1117" stroke="#252b33"/>
+    ${edges}
+    ${nodes}
+    <rect x="972" y="126" width="150" height="492" rx="16" fill="#0d1014" stroke="#252b33"/>
+    <text x="992" y="160" fill="#ffb195" font-size="12" font-weight="800">MINIMAP</text>
+    <rect x="996" y="186" width="102" height="250" rx="10" fill="#111820" stroke="#333b46"/>
+    ${graphNodes.map((node) => `<circle cx="${1008 + node.x / 10}" cy="${198 + node.y / 10}" r="${node.id === step.diagram.nodeId ? 6 : 4}" fill="${node.id === step.diagram.nodeId ? "#e87855" : "#7cc7ff"}"/>`).join("\n")}
+    <rect x="1000" y="210" width="78" height="86" rx="7" fill="rgba(232,120,85,0.12)" stroke="#e87855"/>
+    <text x="992" y="472" fill="#f2f4f7" font-size="12" font-weight="800">Active node</text>
+    <text x="992" y="494" fill="#ffb195" font-size="12">${escapeXml(step.diagram.nodeId)}</text>
+    <text x="62" y="654" fill="#7cc7ff" font-size="12">Graph JSON: ${escapeXml(step.mapCapture.graphPath)}. Replace with .understand-anything/knowledge-graph.json after running the full plugin.</text>
+  `);
+}
+
+function uiRecordRows(step) {
+  const rows = ["Artifact entry", "Trace tabs", "Trace data", "Step evidence", "Flow graph", "Trace styling"];
+  return rows
+    .map((row, index) => {
+      const y = 174 + index * 70;
+      const active = step.order === index + 1;
+      return `<rect x="82" y="${y}" width="206" height="54" rx="10" fill="${active ? "rgba(232,120,85,0.18)" : "#171b21"}" stroke="${active ? "#e87855" : "#252b33"}"/><text x="100" y="${y + 24}" fill="${active ? "#ffb195" : "#f2f4f7"}" font-size="12" font-weight="800">${row}</text><text x="100" y="${y + 42}" fill="#99a3ae" font-size="10">Step ${String(index + 1).padStart(2, "0")}</text>`;
+    })
+    .join("\n");
+}
+
+function normalizeRect(rect) {
+  const width = Math.max(60, Math.min(270, Math.round((rect.width / 1080) * 370)));
+  const height = Math.max(34, Math.min(180, Math.round((rect.height / 620) * 300)));
+  const x = 734 + Math.max(16, Math.min(336 - width, Math.round((rect.x / 1080) * 330)));
+  const y = 276 + Math.max(42, Math.min(264 - height, Math.round((rect.y / 1180) * 250)));
+  return { x, y, width, height };
+}
+
+function svgFrame(body) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img">\n<style>text{font-family:Inter,Segoe UI,Arial,sans-serif}.mono{font-family:Consolas,Menlo,monospace}</style>\n${body}\n</svg>\n`;
+}
+
+function escapeXml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
 }
 
 const NODE_ROOM_SOURCE_SNAPSHOTS = {

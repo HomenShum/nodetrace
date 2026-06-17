@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img">
+<style>text{font-family:Inter,Segoe UI,Arial,sans-serif}.mono{font-family:Consolas,Menlo,monospace}</style>
+
+    <rect width="1200" height="720" rx="24" fill="#080a0d"/>
+    <rect x="34" y="34" width="1132" height="652" rx="20" fill="#101317" stroke="#2b333d"/>
+    <rect x="34" y="34" width="1132" height="54" rx="20" fill="#171b21"/>
+    <text x="60" y="68" fill="#f2f4f7" font-size="15" font-weight="800">NodeRoom UI target recomposition</text>
+    <text x="910" y="68" fill="#99a3ae" font-size="12">selector: [data-noderoom-surface=&quot;workSurface.traceStrip&quot;]</text>
+    <rect x="60" y="114" width="252" height="532" rx="14" fill="#0d1014" stroke="#252b33"/>
+    <text x="84" y="148" fill="#ffb195" font-size="12" font-weight="800">TRACE RECORDS</text>
+    <rect x="82" y="174" width="206" height="54" rx="10" fill="rgba(232,120,85,0.18)" stroke="#e87855"/><text x="100" y="198" fill="#ffb195" font-size="12" font-weight="800">Artifact entry</text><text x="100" y="216" fill="#99a3ae" font-size="10">Step 01</text>
+<rect x="82" y="244" width="206" height="54" rx="10" fill="#171b21" stroke="#252b33"/><text x="100" y="268" fill="#f2f4f7" font-size="12" font-weight="800">Trace tabs</text><text x="100" y="286" fill="#99a3ae" font-size="10">Step 02</text>
+<rect x="82" y="314" width="206" height="54" rx="10" fill="#171b21" stroke="#252b33"/><text x="100" y="338" fill="#f2f4f7" font-size="12" font-weight="800">Trace data</text><text x="100" y="356" fill="#99a3ae" font-size="10">Step 03</text>
+<rect x="82" y="384" width="206" height="54" rx="10" fill="#171b21" stroke="#252b33"/><text x="100" y="408" fill="#f2f4f7" font-size="12" font-weight="800">Step evidence</text><text x="100" y="426" fill="#99a3ae" font-size="10">Step 04</text>
+<rect x="82" y="454" width="206" height="54" rx="10" fill="#171b21" stroke="#252b33"/><text x="100" y="478" fill="#f2f4f7" font-size="12" font-weight="800">Flow graph</text><text x="100" y="496" fill="#99a3ae" font-size="10">Step 05</text>
+<rect x="82" y="524" width="206" height="54" rx="10" fill="#171b21" stroke="#252b33"/><text x="100" y="548" fill="#f2f4f7" font-size="12" font-weight="800">Trace styling</text><text x="100" y="566" fill="#99a3ae" font-size="10">Step 06</text>
+    <rect x="336" y="114" width="796" height="532" rx="14" fill="#0d1117" stroke="#252b33"/>
+    <text x="362" y="154" fill="#f2f4f7" font-size="20" font-weight="800">Open NodeRoom's Trace tab from the artifact shell</text>
+    <text x="362" y="184" fill="#99a3ae" font-size="13">Start from the real artifact panel. NodeRoom exposes a trace tab and a bottom room trace strip, so users can mov</text>
+    <rect x="362" y="214" width="74" height="32" rx="8" fill="rgba(232,120,85,0.16)" stroke="rgba(232,120,85,0.46)"/>
+    <text x="384" y="235" fill="#ffb195" font-size="12" font-weight="800">Overview</text>
+    <rect x="448" y="214" width="58" height="32" rx="8" fill="#171b21"/><text x="466" y="235" fill="#c6ccd4" font-size="12">Steps</text>
+    <rect x="516" y="214" width="78" height="32" rx="8" fill="#171b21"/><text x="536" y="235" fill="#c6ccd4" font-size="12">Minimap</text>
+    <rect x="604" y="214" width="78" height="32" rx="8" fill="#171b21"/><text x="622" y="235" fill="#c6ccd4" font-size="12">Raw JSON</text>
+    <rect x="362" y="276" width="344" height="300" rx="12" fill="#171b21" stroke="#252b33"/>
+    <text x="384" y="314" fill="#f2f4f7" font-size="14" font-weight="800">Code evidence</text>
+    <text x="384" y="346" fill="#99a3ae" font-size="12">src/ui/panels/Artifact.tsx</text>
+    <rect x="734" y="276" width="370" height="300" rx="12" fill="#10151b" stroke="#252b33"/>
+    <text x="756" y="314" fill="#f2f4f7" font-size="14" font-weight="800">UI evidence</text>
+    <rect x="790" y="438" width="240" height="102" rx="8" fill="rgba(232,120,85,0.2)" stroke="#e87855" stroke-width="3"/>
+    <path d="M1030 456 L1038 164" stroke="#e87855" stroke-width="2" fill="none"/>
+    <rect x="892" y="126" width="230" height="54" rx="10" fill="#271711" stroke="#e87855"/>
+    <text x="908" y="150" fill="#ffb195" font-size="12" font-weight="800">DOMRect target</text>
+    <text x="908" y="168" fill="#e5eaf0" font-size="11">x184 y1086 w700 h210</text>
+    <text x="60" y="674" fill="#7cc7ff" font-size="12">NodeRoom bottom room trace strip with recent room events and trace telemetry.</text>
+  
+</svg>

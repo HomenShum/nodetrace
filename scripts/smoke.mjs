@@ -58,17 +58,19 @@ if (issues.length === 0) {
     "125-step QA-agent trace",
     "examples/trace-coach-sqlite/README.md",
     "docs/eval/nodetrace-trace-coach-sqlite.png",
+    "docs/eval/nodetrace-trace-coach-minimap.png",
+    "public/captures/noderoom-trace-knowledge-graph.json",
     "NodeRoom codebase Trace Coach",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
-  for (const required of ["NodeRoom trace records", "coachPanel", "captureBox", "r-tracevu-tabs", "stepLabel"]) {
+  for (const required of ["NodeRoom trace records", "coachPanel", "evidenceShot", "Minimap", "r-tracevu-tabs", "stepLabel"]) {
     const dashboard = readFileSync("src/DemoDashboard.tsx", "utf8");
     const styles = readFileSync("src/styles.css", "utf8");
     if (!dashboard.includes(required) && !styles.includes(required)) issues.push(`coach UI missing ${required}`);
   }
   const coachScript = readFileSync("scripts/trace-coach-sqlite.mjs", "utf8");
-  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface"]) {
+  for (const required of ["HomenShum/noderoom", "ordered steps only", "stepLabel", "data-noderoom-surface", "renderIdeSvg", "renderUiTargetSvg", "renderMinimapSvg", "Understand-Anything-style"]) {
     if (!coachScript.includes(required)) issues.push(`trace-coach script missing ${required}`);
   }
   if (coachScript.includes("timestampLabel")) issues.push("trace-coach script still uses timestampLabel");
@@ -103,6 +105,11 @@ if (issues.length === 0) {
     "scripts/trace-coach-sqlite.mjs",
     "examples/trace-coach-sqlite/README.md",
     "docs/eval/nodetrace-trace-coach-sqlite.png",
+    "docs/eval/nodetrace-trace-coach-minimap.png",
+    "public/captures/coach-step-01-artifact-entry-ide.svg",
+    "public/captures/coach-step-01-artifact-entry-ui.svg",
+    "public/captures/coach-step-01-artifact-entry-minimap.svg",
+    "public/captures/noderoom-trace-knowledge-graph.json",
   ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);
   }

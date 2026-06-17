@@ -701,6 +701,27 @@ button {
   white-space: pre-wrap;
 }
 
+.evidenceShot {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0d1117;
+  object-fit: contain;
+}
+
+.ideShot,
+.uiShot {
+  aspect-ratio: 5 / 3;
+  max-height: 560px;
+}
+
+.mapShot {
+  aspect-ratio: 5 / 3;
+  max-height: 520px;
+}
+
 .captureFrame {
   overflow: hidden;
   margin-top: 10px;

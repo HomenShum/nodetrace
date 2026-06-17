@@ -31,9 +31,10 @@ runs target smoke, and passes the target's real `next build`.
 public client state stays bounded and Builder-safe.
 `trace-coach:sqlite` creates a NodeRoom codebase onboarding trace from the
 NodeRoom trace-tab implementation. Use that pattern for another repo by
-replacing the file anchors, stable UI selectors, DOMRects, screenshot paths,
-and Mermaid source with values captured from the target app. Keep the
-walkthrough ordered by step label, not by video timecode.
+replacing the file anchors, stable UI selectors, DOMRects, generated IDE/source
+captures, generated UI target captures, minimap graph JSON, and Mermaid source
+with values captured from the target app. Keep the walkthrough ordered by step
+label, not by video timecode.
 
 The installer patches `package.json`, copies the trace UI, creates a Vite demo
 entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
@@ -74,6 +75,12 @@ Write these records from your app runtime:
 | `trace_code_ownership` | builder-only ownership metadata |
 | `trace_coach_steps` | codebase coach steps with step label, group, code range, UI selector, DOMRect, screenshot path, and diagram source |
 | `trace_coach_graph_nodes` / `trace_coach_graph_edges` | flow graph metadata for the coach panel |
+
+For visual codebase onboarding, publish `NodeTraceState.coach.steps[*].sourceView`
+for the IDE/source slice and `mapCapture` for a codebase minimap. The bundled
+Trace Coach example writes deterministic SVGs to `public/captures/`; teams that
+run Understand Anything can replace the generated minimap payload with their
+`.understand-anything/knowledge-graph.json` output.
 
 Serve a `NodeTraceState` object to the client. Keep `codeOwnership` empty unless
 the current viewer has server-verified builder access.

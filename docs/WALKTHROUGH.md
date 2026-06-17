@@ -84,8 +84,9 @@ build when the target app has a build script. The receipt is:
 
 `npm run trace-coach:sqlite` switches the demo state to a NodeRoom codebase
 Trace Coach campaign based on NodeRoom trace-tab files, selectors, DOMRects,
-screenshot paths, and Mermaid flow source. It uses ordered step labels instead
-of video timecodes.
+generated IDE/source screenshots, generated UI target screenshots, an
+Understand-Anything-style minimap graph, and Mermaid source. It uses ordered
+step labels instead of video timecodes.
 
 ## 4. Architecture
 
@@ -119,7 +120,7 @@ Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
 Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
-Run npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs.
+Run npm run trace-coach:sqlite when changing the NodeRoom-style Trace Coach tabs, generated source/UI captures, or minimap graph.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

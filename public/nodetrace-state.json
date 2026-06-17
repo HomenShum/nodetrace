@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T08:39:56.797Z",
+  "generatedAt": "2026-06-17T08:55:11.008Z",
   "session": {
     "id": "trace-coach-noderoom-sqlite",
     "title": "Trace Coach: NodeRoom codebase trace",
@@ -210,13 +210,31 @@
             "width": 700,
             "height": 210
           },
-          "screenshotPath": "captures/noderoom-room-trace-strip.png",
+          "screenshotPath": "captures/coach-step-01-artifact-entry-ui.svg",
           "alt": "NodeRoom bottom room trace strip with recent room events and trace telemetry."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "artifact",
           "source": "flowchart LR\n  Artifact[Artifact shell] --> Strip[Room trace strip]\n  Strip --> TraceTab[Trace tab]\n  TraceTab --> Surface[TraceSurface]"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-01-artifact-entry-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/ui/panels/Artifact.tsx",
+          "folderTree": [
+            "src",
+            "  - ui",
+            "    - panels",
+            "      - Artifact.tsx"
+          ],
+          "highlightStartLine": 1655,
+          "highlightEndLine": 1681
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-01-artifact-entry-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/ui/panels/Artifact.tsx",
@@ -241,13 +259,31 @@
             "width": 354,
             "height": 42
           },
-          "screenshotPath": "captures/noderoom-trace-detail-tabs.png",
+          "screenshotPath": "captures/coach-step-02-detail-tabs-ui.svg",
           "alt": "NodeRoom trace detail tabs for Overview, Steps, Flow, Evidence, and Raw JSON."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "surface",
           "source": "flowchart LR\n  Record[Selected trace record] --> Overview\n  Record --> Steps\n  Record --> Flow\n  Record --> Evidence\n  Record --> RawJSON[Raw JSON]"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-02-detail-tabs-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/ui/panels/TraceSurface.tsx",
+          "folderTree": [
+            "src",
+            "  - ui",
+            "    - panels",
+            "      - TraceSurface.tsx"
+          ],
+          "highlightStartLine": 15,
+          "highlightEndLine": 47
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-02-detail-tabs-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/ui/panels/TraceSurface.tsx",
@@ -272,13 +308,31 @@
             "width": 300,
             "height": 108
           },
-          "screenshotPath": "captures/noderoom-trace-record-list.png",
+          "screenshotPath": "captures/coach-step-03-trace-data-ui.svg",
           "alt": "NodeRoom trace record list showing source, step count, and verdict pills."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "data",
           "source": "flowchart TB\n  TraceRecord --> Source\n  TraceRecord --> Verdict\n  TraceRecord --> Steps\n  Steps --> Attachments\n  Attachments --> ScreenshotBox[normalized screenshot box]"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-03-trace-data-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/ui/panels/traceData.ts",
+          "folderTree": [
+            "src",
+            "  - ui",
+            "    - panels",
+            "      - traceData.ts"
+          ],
+          "highlightStartLine": 24,
+          "highlightEndLine": 66
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-03-trace-data-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/ui/panels/traceData.ts",
@@ -303,13 +357,31 @@
             "width": 454,
             "height": 256
           },
-          "screenshotPath": "captures/noderoom-trace-step-box.png",
+          "screenshotPath": "captures/coach-step-04-step-row-ui.svg",
           "alt": "NodeRoom trace step screenshot frame with a highlighted bounding box overlay."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "steps",
           "source": "flowchart LR\n  Step[TraceStep] --> Label\n  Step --> Detail\n  Step --> Attachments\n  Attachments --> Screenshot\n  Screenshot --> Box[box x y w h]"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-04-step-row-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/ui/panels/TraceStepRow.tsx",
+          "folderTree": [
+            "src",
+            "  - ui",
+            "    - panels",
+            "      - TraceStepRow.tsx"
+          ],
+          "highlightStartLine": 18,
+          "highlightEndLine": 46
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-04-step-row-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/ui/panels/TraceStepRow.tsx",
@@ -334,13 +406,31 @@
             "width": 760,
             "height": 456
           },
-          "screenshotPath": "captures/noderoom-trace-flow.png",
+          "screenshotPath": "captures/coach-step-05-flow-ui.svg",
           "alt": "NodeRoom trace flow graph with grouped phases, animated edges, controls, and minimap."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "flow",
           "source": "flowchart LR\n  Steps[Ordered TraceStep list] --> Nodes[ReactFlow nodes]\n  Nodes --> Edges[Sequential edges]\n  Nodes --> Detail[Shared StepRow detail]"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-05-flow-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/ui/panels/TraceFlow.tsx",
+          "folderTree": [
+            "src",
+            "  - ui",
+            "    - panels",
+            "      - TraceFlow.tsx"
+          ],
+          "highlightStartLine": 24,
+          "highlightEndLine": 66
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-05-flow-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/ui/panels/TraceFlow.tsx",
@@ -365,13 +455,30 @@
             "width": 690,
             "height": 888
           },
-          "screenshotPath": "captures/noderoom-trace-surface-style.png",
+          "screenshotPath": "captures/coach-step-06-style-ui.svg",
           "alt": "NodeRoom dark trace surface with record list, detail pane, tabs, and step cards."
         },
         "diagram": {
           "kind": "mermaid",
           "nodeId": "style",
           "source": "flowchart TB\n  Tokens[NodeRoom design tokens] --> TraceList\n  Tokens --> DetailTabs\n  Tokens --> StepCards\n  Tokens --> ScreenshotBoxes"
+        },
+        "sourceView": {
+          "imagePath": "captures/coach-step-06-style-ide.svg",
+          "repositoryRoot": "HomenShum/noderoom",
+          "activeFile": "src/app/styles.css",
+          "folderTree": [
+            "src",
+            "  - app",
+            "    - styles.css"
+          ],
+          "highlightStartLine": 869,
+          "highlightEndLine": 925
+        },
+        "mapCapture": {
+          "imagePath": "captures/coach-step-06-style-minimap.svg",
+          "graphPath": "captures/noderoom-trace-knowledge-graph.json",
+          "model": "Understand-Anything-style structural minimap"
         },
         "codeBlock": {
           "filePath": "src/app/styles.css",
@@ -384,33 +491,63 @@
     "graphNodes": [
       {
         "id": "artifact",
-        "label": "Artifact trace tab",
-        "kind": "component"
+        "label": "Artifact shell",
+        "kind": "component",
+        "filePath": "src/ui/panels/Artifact.tsx",
+        "layer": "UI entry",
+        "x": 112,
+        "y": 250,
+        "summary": "Entry point that exposes the room trace strip."
       },
       {
         "id": "surface",
         "label": "TraceSurface",
-        "kind": "component"
+        "kind": "component",
+        "filePath": "src/ui/panels/TraceSurface.tsx",
+        "layer": "Trace UI",
+        "x": 332,
+        "y": 176,
+        "summary": "Master-detail trace tab with records, tabs, and active detail."
       },
       {
         "id": "data",
         "label": "traceData",
-        "kind": "schema"
+        "kind": "schema",
+        "filePath": "src/ui/panels/traceData.ts",
+        "layer": "Data model",
+        "x": 332,
+        "y": 382,
+        "summary": "TraceRecord and TraceStep structures that feed the UI."
       },
       {
         "id": "steps",
-        "label": "StepRow",
-        "kind": "component"
+        "label": "TraceStepRow",
+        "kind": "component",
+        "filePath": "src/ui/panels/TraceStepRow.tsx",
+        "layer": "Evidence UI",
+        "x": 560,
+        "y": 286,
+        "summary": "Step renderer for source-linked rows and screenshot boxes."
       },
       {
         "id": "flow",
         "label": "TraceFlow",
-        "kind": "component"
+        "kind": "component",
+        "filePath": "src/ui/panels/TraceFlow.tsx",
+        "layer": "Graph UI",
+        "x": 784,
+        "y": 190,
+        "summary": "Graph view over the same ordered trace steps."
       },
       {
         "id": "style",
-        "label": "NodeRoom CSS",
-        "kind": "runtime"
+        "label": "Trace CSS",
+        "kind": "runtime",
+        "filePath": "src/app/styles.css",
+        "layer": "Visual system",
+        "x": 790,
+        "y": 406,
+        "summary": "Dark trace surface, tabs, cards, and highlighted boxes."
       }
     ],
     "graphEdges": [

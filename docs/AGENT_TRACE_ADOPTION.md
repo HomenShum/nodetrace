@@ -24,6 +24,9 @@ Then wire our agent trace data into NodeTraceState:
 - trace_events: every agent step, tool call, retry, browser action, scheduler event, and receipt
 - trace_proofs: source-backed business or QA evidence cards
 - trace_code_ownership: Builder-only ownership served by a privileged server route
+- coach.sourceView: IDE/source screenshot or deterministic recomposition for the active code section
+- coach.uiCapture: UI screenshot or deterministic target callout with selector and DOMRect
+- coach.mapCapture: codebase minimap backed by a graph JSON file, compatible with an Understand Anything export
 
 Tag visible UI surfaces with data-nodetrace-surface. Keep public client state
 free of file paths, query names, mutation names, skill paths, raw prompts,

@@ -10,7 +10,7 @@ or model provider.
 
 Agent-trace injection guide: [`docs/AGENT_TRACE_ADOPTION.md`](docs/AGENT_TRACE_ADOPTION.md).
 
-[Visual walkthrough](docs/WALKTHROUGH.md) · [Porting guide](docs/PORTING.md)
+[Visual walkthrough](docs/WALKTHROUGH.md) - [Porting guide](docs/PORTING.md)
 
 ## Happy Path
 
@@ -83,11 +83,15 @@ npm run dev
 
 That proof seeds the local sample app from NodeRoom's real trace-tab source
 path. It writes a SQLite-backed campaign where each ordered step contains a
-step label, real NodeRoom file path and line range, UI selector, DOMRect
-bounding box, screenshot path, and Mermaid flow source. See
+step label, real NodeRoom file path and line range, generated IDE/source
+recomposition, UI selector, DOMRect bounding box, generated UI target callout,
+and Mermaid flow source. It also writes an Understand-Anything-style codebase
+minimap to `public/captures/noderoom-trace-knowledge-graph.json`. See
 [`examples/trace-coach-sqlite/README.md`](examples/trace-coach-sqlite/README.md).
 
 ![NodeRoom-style Trace Coach tabs](docs/eval/nodetrace-trace-coach-sqlite.png)
+
+![NodeRoom Trace Coach minimap](docs/eval/nodetrace-trace-coach-minimap.png)
 
 Default `add` behavior:
 
@@ -134,6 +138,7 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `examples/builder-access/server-route.mjs`: token-gated code ownership route.
 - `examples/qa-agent/README.md`: coding-agent prompt for 100+ step QA traces.
 - `examples/trace-coach-sqlite/README.md`: NodeRoom codebase Trace Coach example.
+- `public/captures/`: generated IDE, UI target, and minimap SVG evidence assets.
 - `docs/AGENT_TRACE_ADOPTION.md`: injection checklist for external agent apps.
 - `docs/PORTING.md`: copy/adapt checklist for coding agents.
 
