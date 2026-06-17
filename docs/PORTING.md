@@ -21,10 +21,13 @@ For a full no-skip Next App Router proof from this repo:
 
 ```bash
 npm run installer:next:e2e
+npm run agent:scale:smoke
 ```
 
 It creates a throwaway Next target, runs the installer, initializes SQLite,
 runs target smoke, and passes the target's real `next build`.
+`agent:scale:smoke` creates a 125-step QA-agent trace fixture and proves the
+public client state stays bounded and Builder-safe.
 
 The installer patches `package.json`, copies the trace UI, creates a Vite demo
 entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
@@ -67,6 +70,11 @@ Write these records from your app runtime:
 Serve a `NodeTraceState` object to the client. Keep `codeOwnership` empty unless
 the current viewer has server-verified builder access.
 
+For 100+ step agents, keep the complete trace ledger in your database and serve
+a bounded client window for the clicked surface. The bundled Trace Lens renders
+the newest relevant rows first while the durable backend keeps the full audit
+history.
+
 ## Security Rules
 
 - Client-safe: opaque ids, labels, proof summaries, confidence, bounded trace rows.
@@ -94,7 +102,9 @@ curl -H "x-nodetrace-builder-token: $NODETRACE_BUILDER_TOKEN" \
 
 The route returns code ownership only when the server-side token matches. The
 client should receive only the gated response after your app's auth and policy
-checks pass.
+checks pass. The latest NodeRoom-compatible Builder shape includes
+`componentRef`, `queryRef`, `mutationRef`, `skillRef`, and `testRef`;
+`backendRef` remains available for non-Convex or mixed backends.
 
 ## Done Criteria
 
@@ -102,6 +112,7 @@ checks pass.
 npm run happy-path
 npm run smoke
 npm run builder:smoke
+npm run agent:scale:smoke
 npm run installer:next:e2e
 npm run build
 ```

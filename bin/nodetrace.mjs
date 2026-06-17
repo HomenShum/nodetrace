@@ -213,7 +213,7 @@ for (const file of [dbPath, statePath, reportPath, "src/nodetrace/TraceLensPanel
 if (issues.length === 0) {
   const panel = readFileSync("src/nodetrace/TraceLensPanel.tsx", "utf8");
   const provider = readFileSync("src/nodetrace/TraceLensProvider.tsx", "utf8");
-  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Review", "Builder"]) {
+  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Review", "Builder", "Query", "Mutation", "Skill"]) {
     if (!panel.includes(required)) issues.push(\`TraceLensPanel missing \${required}\`);
   }
   for (const required of ["data-nodetrace-surface", "data-noderoom-surface"]) {
@@ -310,7 +310,7 @@ Open \`${route}\` in the dev server.
 
 Wrap the app shell with \`TraceLensProvider\`, render \`TraceLensPanel\`, and tag visible surfaces with \`data-nodetrace-surface\`.
 
-Keep \`builderCapable\` server-verified. Do not expose code ownership, file paths, query names, raw prompts, cookies, tokens, or secrets in public client state.
+Keep \`builderCapable\` server-verified. Do not expose code ownership, file paths, query names, mutation names, skill paths, raw prompts, cookies, tokens, or secrets in public client state. Builder ownership should come from a privileged server route and include component, query, mutation, skill, and test refs.
 `;
 }
 

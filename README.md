@@ -8,6 +8,8 @@ trace rows, gated code ownership, and a local SQLite happy path. It is not bound
 to NodeAgent's agent architecture. Bring your own agent, tools, queue, database,
 or model provider.
 
+Agent-trace injection guide: [`docs/AGENT_TRACE_ADOPTION.md`](docs/AGENT_TRACE_ADOPTION.md).
+
 [Visual walkthrough](docs/WALKTHROUGH.md) · [Porting guide](docs/PORTING.md)
 
 ## Happy Path
@@ -61,6 +63,17 @@ That command creates a throwaway Next App Router target, installs dependencies,
 runs the NodeTrace happy path and target smoke, then runs the target's real
 `next build`. It also verifies Windows BOM-prefixed `package.json` files.
 
+For long-running QA/browser/workflow agents:
+
+```bash
+npm run agent:scale:smoke
+```
+
+That proof creates a 125-step QA-agent trace fixture, verifies the public client
+state remains Builder-safe, and confirms the Trace Lens keeps a bounded runtime
+window for the clicked surface. The integration prompt is in
+[`examples/qa-agent/README.md`](examples/qa-agent/README.md).
+
 Default `add` behavior:
 
 - copies `src/nodetrace/`
@@ -104,6 +117,8 @@ Cmd/Ctrl-click any tagged surface to open Trace Lens:
 - `db/schema.sql`: SQLite schema for sessions, surfaces, proofs, events, and gated ownership.
 - `scripts/init-sqlite.mjs`: local database/state initializer.
 - `examples/builder-access/server-route.mjs`: token-gated code ownership route.
+- `examples/qa-agent/README.md`: coding-agent prompt for 100+ step QA traces.
+- `docs/AGENT_TRACE_ADOPTION.md`: injection checklist for external agent apps.
 - `docs/PORTING.md`: copy/adapt checklist for coding agents.
 
 ## Trace Contract
@@ -112,7 +127,7 @@ NodeTrace follows the same safety shape as the NodeRoom Trace Lens:
 
 - The client only sees opaque surface ids and user-facing labels.
 - `Review` is the default mode.
-- `Builder` is visible but only reveals code ownership when `builderCapable` is server verified.
+- `Builder` tabs and code ownership only appear when `builderCapable` is server verified.
 - `Business proof` shows source/evidence cards and confidence.
 - `Runtime trace` shows bounded frame/tool/run events.
 - `Code ownership` stays locked until a privileged server route supplies it.
@@ -137,7 +152,7 @@ Use either attribute on clickable surfaces:
 3. Tag your visible surfaces with `data-nodetrace-surface`.
 4. Insert trace rows and proof cards from your app runtime.
 5. Serve `NodeTraceState` to the client from your backend.
-6. Keep code ownership behind a privileged server route.
+6. Keep code ownership behind a privileged server route with component, query, mutation, skill, and test ownership.
 
 NodeTrace provides the setup needed for the UI and database path. It does not
 choose your agent loop, model, tool runtime, queue, auth, or cloud provider.

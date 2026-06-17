@@ -25,6 +25,7 @@ if (jsonOutPath) mkdirSync(dirname(jsonOutPath), { recursive: true });
 const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
 db.exec(readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8"));
+ensureOwnershipColumns(db);
 
 const session = {
   id: `nodetrace-${startedAt.toISOString().replace(/[:.]/g, "-")}`,
@@ -146,6 +147,9 @@ const codeOwnership = [
     ownerLabel: "Trace platform team",
     componentRef: "server-only/component-ref",
     backendRef: "server-only/backend-ref",
+    queryRef: "server-only/query-ref",
+    mutationRef: "server-only/mutation-ref",
+    skillRef: "server-only/skill-ref",
     testRef: "server-only/test-ref",
     createdAt: startedAt.toISOString(),
   },
@@ -173,9 +177,9 @@ const insertTrace = db.prepare(`
 `);
 const insertOwnership = db.prepare(`
   insert or replace into trace_code_ownership
-    (id, surface_id, owner_label, component_ref, backend_ref, test_ref, builder_only, created_at)
+    (id, surface_id, owner_label, component_ref, backend_ref, query_ref, mutation_ref, skill_ref, test_ref, builder_only, created_at)
   values
-    (@id, @surfaceId, @ownerLabel, @componentRef, @backendRef, @testRef, 1, @createdAt)
+    (@id, @surfaceId, @ownerLabel, @componentRef, @backendRef, @queryRef, @mutationRef, @skillRef, @testRef, 1, @createdAt)
 `);
 
 db.transaction(() => {
@@ -258,4 +262,15 @@ function parseArgs(args) {
 
 function relativePath(path) {
   return path.replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, "").replaceAll("\\", "/");
+}
+
+function ensureOwnershipColumns(database) {
+  const existing = new Set(database.prepare("pragma table_info(trace_code_ownership)").all().map((row) => row.name));
+  for (const [name, fallback] of [
+    ["query_ref", "'server-only/query-ref'"],
+    ["mutation_ref", "'server-only/mutation-ref'"],
+    ["skill_ref", "'server-only/skill-ref'"],
+  ]) {
+    if (!existing.has(name)) database.exec(`alter table trace_code_ownership add column ${name} text not null default ${fallback}`);
+  }
 }

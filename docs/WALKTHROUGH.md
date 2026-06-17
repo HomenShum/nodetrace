@@ -70,6 +70,7 @@ For a no-skip Next proof:
 
 ```bash
 npm run installer:next:e2e
+npm run agent:scale:smoke
 ```
 
 The installer copies the trace UI, schema, demo entry, init/smoke scripts, and
@@ -111,6 +112,7 @@ Write app runtime events into sessions, surfaces, proofs, trace events, and gate
 Keep builderCapable server-verified.
 Run npm run nodetrace:happy-path, npm run nodetrace:smoke, and npm run build.
 Run npm run installer:next:e2e in the NodeTrace repo when changing the Next scaffold.
+Run npm run agent:scale:smoke when changing trace-row rendering, Builder gating, or long-running agent state.
 Use examples/builder-access/server-route.mjs for a token-gated Builder ownership route.
 ```
 

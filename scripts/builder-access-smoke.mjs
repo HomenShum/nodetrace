@@ -31,8 +31,8 @@ try {
     });
     const body = await authorized.json();
     if (authorized.status !== 200 || !body.ok) issues.push(`authorized lookup failed: ${authorized.status} ${JSON.stringify(body)}`);
-    if (!body.ownership?.componentRef || !body.ownership?.backendRef || !body.ownership?.testRef) {
-      issues.push("authorized lookup missing component/backend/test ownership");
+    if (!body.ownership?.componentRef || !body.ownership?.backendRef || !body.ownership?.queryRef || !body.ownership?.mutationRef || !body.ownership?.skillRef || !body.ownership?.testRef) {
+      issues.push("authorized lookup missing component/backend/query/mutation/skill/test ownership");
     }
   }
 } finally {

@@ -46,6 +46,9 @@ export interface CodeOwnershipReceipt {
   ownerLabel: string;
   componentRef: string;
   backendRef: string;
+  queryRef: string;
+  mutationRef: string;
+  skillRef: string;
   testRef: string;
 }
 

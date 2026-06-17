@@ -28,14 +28,16 @@ export function TraceLensPanel({
         <header className="nt-head">
           <FileSearch size={15} aria-hidden="true" />
           <strong>{meta.label}</strong>
-          <div className="nt-modes" role="tablist" aria-label="Trace Lens mode">
-            <button type="button" aria-selected={mode === "review"} data-on={String(mode === "review")} onClick={() => setMode("review")}>
-              Review
-            </button>
-            <button type="button" aria-selected={mode === "builder"} data-on={String(mode === "builder")} onClick={() => setMode("builder")}>
-              Builder {!builderCapable ? <Lock size={12} aria-hidden="true" /> : null}
-            </button>
-          </div>
+          {builderCapable ? (
+            <div className="nt-modes" role="tablist" aria-label="Trace Lens mode">
+              <button type="button" aria-selected={mode === "review"} data-on={String(mode === "review")} onClick={() => setMode("review")}>
+                Review
+              </button>
+              <button type="button" aria-selected={mode === "builder"} data-on={String(mode === "builder")} onClick={() => setMode("builder")}>
+                Builder
+              </button>
+            </div>
+          ) : null}
           <button type="button" className="nt-close" onClick={close} aria-label="Close Trace Lens">
             <X size={15} aria-hidden="true" />
           </button>
@@ -95,7 +97,7 @@ export function TraceLensPanel({
               <CodeOwnership ownership={ownership} />
             ) : (
               <p className="nt-empty nt-locked">
-                Builder access only. Component, backend, and test ownership must come from a privileged server route.
+                Builder access only. Component, query, mutation, skill, and test ownership must come from a privileged server route.
               </p>
             )}
           </TraceRegion>
@@ -131,6 +133,18 @@ function CodeOwnership({ ownership }: { ownership: CodeOwnershipReceipt }) {
       <div>
         <dt>Backend</dt>
         <dd>{ownership.backendRef}</dd>
+      </div>
+      <div>
+        <dt>Query</dt>
+        <dd>{ownership.queryRef}</dd>
+      </div>
+      <div>
+        <dt>Mutation</dt>
+        <dd>{ownership.mutationRef}</dd>
+      </div>
+      <div>
+        <dt>Skill</dt>
+        <dd>{ownership.skillRef}</dd>
       </div>
       <div>
         <dt>Test</dt>

@@ -34,8 +34,9 @@ export function createBuilderAccessServer(options) {
       send(res, 400, { ok: false, error: "surfaceId_required" });
       return;
     }
+    const columns = ownershipSelectColumns(db);
     const row = db.prepare(`
-      select surface_id, component_ref, backend_ref, test_ref, owner_label, created_at
+      select ${columns}
       from trace_code_ownership
       where surface_id = ?
     `).get(surfaceId);
@@ -50,6 +51,9 @@ export function createBuilderAccessServer(options) {
         surfaceId: row.surface_id,
         componentRef: row.component_ref,
         backendRef: row.backend_ref,
+        queryRef: row.query_ref,
+        mutationRef: row.mutation_ref,
+        skillRef: row.skill_ref,
         testRef: row.test_ref,
         ownerLabel: row.owner_label,
         createdAt: row.created_at,
@@ -76,6 +80,22 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
+}
+
+function ownershipSelectColumns(db) {
+  const existing = new Set(db.prepare("pragma table_info(trace_code_ownership)").all().map((row) => row.name));
+  const optional = (name, fallback) => existing.has(name) ? name : `${fallback} as ${name}`;
+  return [
+    "surface_id",
+    "component_ref",
+    "backend_ref",
+    optional("query_ref", "'server-only/query-ref'"),
+    optional("mutation_ref", "'server-only/mutation-ref'"),
+    optional("skill_ref", "'server-only/skill-ref'"),
+    "test_ref",
+    "owner_label",
+    "created_at",
+  ].join(", ");
 }
 
 function send(res, status, body) {

@@ -85,7 +85,7 @@ function validateTarget(targetDir, framework, issues) {
   }
   const panel = readFileSync(join(targetDir, "src/nodetrace/TraceLensPanel.tsx"), "utf8");
   const provider = readFileSync(join(targetDir, "src/nodetrace/TraceLensProvider.tsx"), "utf8");
-  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Review", "Builder"]) {
+  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Review", "Builder", "Query", "Mutation", "Skill"]) {
     if (!panel.includes(required)) issues.push(`${framework} panel missing ${required}`);
   }
   for (const required of ["data-nodetrace-surface", "data-noderoom-surface"]) {

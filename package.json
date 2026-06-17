@@ -47,11 +47,12 @@
     "db:init": "node scripts/init-sqlite.mjs",
     "happy-path": "node scripts/init-sqlite.mjs --json-out docs/eval/nodetrace-happy-path.json",
     "builder:smoke": "node scripts/builder-access-smoke.mjs",
+    "agent:scale:smoke": "node scripts/agent-trace-scale-smoke.mjs",
     "installer:next:e2e": "node scripts/installer-next-e2e-smoke.mjs",
     "package:dry-run": "npm pack --dry-run",
     "walkthroughs:render": "node scripts/render-walkthrough-media.mjs",
     "smoke": "node scripts/smoke.mjs && node scripts/cli-smoke.mjs",
-    "prepush": "npm run happy-path && npm run smoke && npm run builder:smoke && npm run installer:next:e2e && npm run build && npm run package:dry-run && npm audit --omit=dev"
+    "prepush": "npm run happy-path && npm run smoke && npm run builder:smoke && npm run agent:scale:smoke && npm run installer:next:e2e && npm run build && npm run package:dry-run && npm audit --omit=dev"
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",

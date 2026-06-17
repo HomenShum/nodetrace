@@ -48,6 +48,9 @@ create table if not exists trace_code_ownership (
   owner_label text not null,
   component_ref text not null,
   backend_ref text not null,
+  query_ref text not null,
+  mutation_ref text not null,
+  skill_ref text not null,
   test_ref text not null,
   builder_only integer not null default 1,
   created_at text not null

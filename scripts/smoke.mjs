@@ -33,13 +33,17 @@ if (issues.length === 0) {
   for (const required of ["data-nodetrace-surface", "data-noderoom-surface", "resolveTraceHit"]) {
     if (!provider.includes(required)) issues.push(`TraceLensProvider missing ${required}`);
   }
-  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Builder", "Review"]) {
+  for (const required of ["Business proof", "Runtime trace", "Code ownership", "Builder", "Review", "Query", "Mutation", "Skill"]) {
     if (!panel.includes(required)) issues.push(`TraceLensPanel missing ${required}`);
   }
   for (const table of ["trace_sessions", "trace_surfaces", "trace_proofs", "trace_events", "trace_code_ownership"]) {
     if (!schema.includes(table)) issues.push(`schema missing ${table}`);
   }
+  for (const column of ["query_ref", "mutation_ref", "skill_ref"]) {
+    if (!schema.includes(column)) issues.push(`schema missing ${column}`);
+  }
   for (const required of [
+    "docs/AGENT_TRACE_ADOPTION.md",
     "docs/WALKTHROUGH.md",
     "nodetrace-dashboard.png",
     "nodetrace-trace-lens.png",
@@ -49,6 +53,8 @@ if (issues.length === 0) {
     "@homenshum/nodetrace",
     "--framework next",
     "npm run installer:next:e2e",
+    "npm run agent:scale:smoke",
+    "125-step QA-agent trace",
   ]) {
     if (!readme.includes(required)) issues.push(`README.md missing ${required}`);
   }
@@ -62,11 +68,12 @@ if (issues.length === 0) {
     "--framework next",
     "npx @homenshum/nodetrace add",
     "npm run installer:next:e2e",
+    "npm run agent:scale:smoke",
     "setup-receipt.json",
   ]) {
     if (!walkthrough.includes(required)) issues.push(`docs/WALKTHROUGH.md missing ${required}`);
   }
-  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e"]) {
+  for (const required of ["Builder Access Route", "NODETRACE_BUILDER_TOKEN", "examples/builder-access/server-route.mjs", "npm run builder:smoke", "npm run installer:next:e2e", "npm run agent:scale:smoke", "125-step QA-agent trace"]) {
     if (!porting.includes(required)) issues.push(`docs/PORTING.md missing ${required}`);
   }
   for (const file of [
@@ -75,7 +82,10 @@ if (issues.length === 0) {
     "docs/walkthroughs/nodetrace-walkthrough.mp4",
     "docs/walkthroughs/nodetrace-walkthrough.gif",
     "examples/builder-access/server-route.mjs",
+    "examples/qa-agent/README.md",
+    "docs/AGENT_TRACE_ADOPTION.md",
     "scripts/builder-access-smoke.mjs",
+    "scripts/agent-trace-scale-smoke.mjs",
   ]) {
     if (!existsSync(file)) issues.push(`missing ${file}`);
   }
