@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,6 +8,7 @@ import { performance } from "node:perf_hooks";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const version = readJson(join(packageRoot, "package.json")).version;
+const defaultPhaseTimeoutMs = readPositiveInteger(process.env.NODETRACE_PHASE_TIMEOUT_MS, 300000);
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
 
@@ -41,6 +42,9 @@ function addNodeTrace(options) {
   }
 
   console.log(`NodeTrace add -> ${formatPath(targetDir)}`);
+  const logPath = join(targetDir, ".nodetrace", "setup-log.txt");
+  writeText(logPath, `NodeTrace setup log\nstartedAt=${new Date(startedAtMs).toISOString()}\ntargetDir=${targetDir}\nframework=${framework}\n\n`, { force: true });
+
   copyDir(join(packageRoot, "src", "trace"), join(targetDir, "src", "nodetrace"), { force });
   copyText(join(packageRoot, "db", "schema.sql"), join(targetDir, "db", "nodetrace.schema.sql"), { force });
   copyText(join(packageRoot, "scripts", "init-sqlite.mjs"), join(targetDir, "scripts", "nodetrace-init.mjs"), {
@@ -64,12 +68,20 @@ function addNodeTrace(options) {
   updatePackageJson(targetDir, framework);
 
   const packageManager = detectPackageManager(targetDir);
-  if (shouldInstall) phases.push(runCommand(targetDir, "install dependencies", packageManager.install));
+  const pkgAfterPatch = readJson(join(targetDir, "package.json"));
+  const phaseCount = (shouldInstall ? 1 : 0) + (shouldVerify ? 2 + (pkgAfterPatch.scripts?.build ? 1 : 0) : 0);
+  const runPhase = (name, phaseCommand) => runCommand(targetDir, name, phaseCommand, {
+    index: phases.length + 1,
+    total: phaseCount,
+    timeoutMs: defaultPhaseTimeoutMs,
+    logPath,
+  });
+  if (shouldInstall) phases.push(runPhase("install dependencies", packageManager.install));
   if (phases.every((phase) => phase.ok) && shouldVerify) {
-    phases.push(runCommand(targetDir, "happy path", packageManager.run("nodetrace:happy-path")));
-    if (phases.every((phase) => phase.ok)) phases.push(runCommand(targetDir, "smoke", packageManager.run("nodetrace:smoke")));
+    phases.push(runPhase("happy path", packageManager.run("nodetrace:happy-path")));
+    if (phases.every((phase) => phase.ok)) phases.push(runPhase("smoke", packageManager.run("nodetrace:smoke")));
     const pkg = readJson(join(targetDir, "package.json"));
-    if (phases.every((phase) => phase.ok) && pkg.scripts?.build) phases.push(runCommand(targetDir, "build", packageManager.run("build")));
+    if (phases.every((phase) => phase.ok) && pkg.scripts?.build) phases.push(runPhase("build", packageManager.run("build")));
   }
 
   const receipt = {
@@ -80,6 +92,7 @@ function addNodeTrace(options) {
     targetDir,
     framework,
     apiKeysRequired: false,
+    setupLog: ".nodetrace/setup-log.txt",
     files: [
       "src/nodetrace",
       "src/nodetrace-demo",
@@ -99,12 +112,14 @@ function addNodeTrace(options) {
   writeJson(join(targetDir, ".nodetrace", "setup-receipt.json"), receipt);
 
   if (!receipt.ok) {
-    console.error("NodeTrace add failed. See .nodetrace/setup-receipt.json");
+    console.error("NodeTrace add failed. See .nodetrace/setup-receipt.json and .nodetrace/setup-log.txt");
     process.exitCode = 1;
     return;
   }
 
   console.log("NodeTrace add: PASS");
+  console.log("Receipt: .nodetrace/setup-receipt.json");
+  console.log("Log: .nodetrace/setup-log.txt");
   console.log("Next:");
   console.log("  npm run nodetrace:dev");
   console.log(framework === "next"
@@ -165,32 +180,56 @@ function updatePackageJson(targetDir, framework) {
   writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
-function runCommand(cwd, name, command) {
+function runCommand(cwd, name, command, options) {
   const startedAt = performance.now();
-  console.log(`- ${name}: ${command.join(" ")}`);
+  const commandText = command.join(" ");
+  const phaseLabel = options.total > 0 ? `[${options.index}/${options.total}]` : "-";
+  console.log(`${phaseLabel} ${name}`);
+  console.log(`    ${commandText}`);
+  appendSetupLog(options.logPath, `## ${name}\ncommand=${commandText}\nstartedAt=${new Date().toISOString()}\n`);
   const result = spawnSync(command[0], command.slice(1), {
     cwd,
     encoding: "utf8",
-    shell: process.platform === "win32",
+    shell: false,
+    timeout: options.timeoutMs,
+    env: commandEnv(),
   });
   const output = [result.error?.message, result.stdout, result.stderr].filter(Boolean).join("\n");
-  const ok = result.status === 0;
-  console.log(`  ${ok ? "PASS" : "FAIL"} ${formatMs(Math.round(performance.now() - startedAt))}`);
+  const durationMs = Math.round(performance.now() - startedAt);
+  const timedOut = result.error?.code === "ETIMEDOUT";
+  const ok = result.status === 0 && !result.error;
+  const status = timedOut ? `TIMEOUT after ${formatMs(options.timeoutMs)}` : ok ? "PASS" : "FAIL";
+  appendSetupLog(options.logPath, `completedAt=${new Date().toISOString()}\ndurationMs=${durationMs}\nstatus=${status}\n\n${output.trim()}\n\n`);
+  console.log(`    ${status} ${formatMs(durationMs)}`);
   if (!ok && output.trim()) console.error(output.trim().slice(-3000));
   return {
     name,
-    command: command.join(" "),
+    command: commandText,
     ok,
-    durationMs: Math.round(performance.now() - startedAt),
-    detail: ok ? "completed" : output.slice(-240).replace(/\s+/g, " ").trim() || "failed",
+    durationMs,
+    timeoutMs: options.timeoutMs,
+    detail: ok ? "completed" : commandFailureDetail(output, timedOut, options.timeoutMs),
   };
 }
 
 function detectPackageManager(targetDir) {
-  if (existsSync(join(targetDir, "pnpm-lock.yaml"))) return { install: ["pnpm", "install"], run: (script) => ["pnpm", "run", script] };
-  if (existsSync(join(targetDir, "yarn.lock"))) return { install: ["yarn", "install"], run: (script) => ["yarn", script] };
-  if (existsSync(join(targetDir, "bun.lockb")) || existsSync(join(targetDir, "bun.lock"))) return { install: ["bun", "install"], run: (script) => ["bun", "run", script] };
-  return { install: [npmCommand(), "install"], run: (script) => [npmCommand(), "run", script] };
+  if (existsSync(join(targetDir, "pnpm-lock.yaml"))) {
+    const pnpm = packageManagerCommand("pnpm");
+    return { install: [...pnpm, "install"], run: (script) => [...pnpm, "run", script] };
+  }
+  if (existsSync(join(targetDir, "yarn.lock"))) {
+    const yarn = packageManagerCommand("yarn");
+    return { install: [...yarn, "install"], run: (script) => [...yarn, script] };
+  }
+  if (existsSync(join(targetDir, "bun.lockb")) || existsSync(join(targetDir, "bun.lock"))) {
+    const bun = packageManagerCommand("bun");
+    return { install: [...bun, "install"], run: (script) => [...bun, "run", script] };
+  }
+  const npm = npmCommand();
+  return {
+    install: [...npm, "install", "--cache", ".nodetrace/npm-cache", "--prefer-offline", "--no-audit", "--fund=false", "--progress=false"],
+    run: (script) => [...npm, "run", script],
+  };
 }
 
 function targetSmokeScript() {
@@ -371,6 +410,33 @@ function writeJson(path, value) {
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+function appendSetupLog(path, value) {
+  mkdirSync(dirname(path), { recursive: true });
+  appendFileSync(path, value);
+}
+
+function commandEnv() {
+  return {
+    ...process.env,
+    NEXT_TELEMETRY_DISABLED: "1",
+    npm_config_audit: "false",
+    npm_config_fund: "false",
+    npm_config_progress: "false",
+    npm_config_update_notifier: "false",
+    NO_UPDATE_NOTIFIER: "1",
+  };
+}
+
+function commandFailureDetail(output, timedOut, timeoutMs) {
+  if (timedOut) return `timed out after ${formatMs(timeoutMs)}; see .nodetrace/setup-log.txt`;
+  return output.slice(-240).replace(/\s+/g, " ").trim() || "failed; see .nodetrace/setup-log.txt";
+}
+
+function readPositiveInteger(value, fallback) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function fail(message) {
   console.error(message);
   process.exitCode = 1;
@@ -386,7 +452,13 @@ function formatPath(path, from = process.cwd()) {
 }
 
 function npmCommand() {
-  return process.platform === "win32" ? "npm.cmd" : "npm";
+  const npmExecPath = process.env.npm_execpath;
+  if (npmExecPath && existsSync(npmExecPath)) return [process.execPath, npmExecPath];
+  return packageManagerCommand("npm");
+}
+
+function packageManagerCommand(name) {
+  return process.platform === "win32" ? ["cmd.exe", "/d", "/s", "/c", `${name}.cmd`] : [name];
 }
 
 function printHelp() {
@@ -400,6 +472,8 @@ Default add behavior copies Trace Lens, patches package scripts/dependencies,
 runs install, runs the no-key happy path, runs target smoke, and runs build
 when the target app has a build script. Vite targets get nodetrace.html; Next
 targets get an App Router /nodetrace page.
+Each phase writes .nodetrace/setup-receipt.json and .nodetrace/setup-log.txt.
+Set NODETRACE_PHASE_TIMEOUT_MS to tune the per-phase timeout.
 
 Capture runs a reusable real-codebase proof plan: actual source screenshots
 from real files plus actual running-app Playwright screenshots and a manifest.

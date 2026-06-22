@@ -56,6 +56,12 @@ The installer patches `package.json`, copies the trace UI, creates a Vite demo
 entry at `nodetrace.html` or a Next App Router `/nodetrace` page, installs
 dependencies, runs the no-key happy path, runs target smoke, runs build when
 the target has a build script, and writes `.nodetrace/setup-receipt.json`.
+It also writes `.nodetrace/setup-log.txt`, uses low-noise npm install flags,
+uses a target-local `.nodetrace/npm-cache`, and enforces a per-phase timeout so
+a coding agent gets a concrete failure receipt instead of a silent install hang.
+Set `NODETRACE_PHASE_TIMEOUT_MS` for slow target environments, or rerun with
+`--skip-install` after installing dependencies through the target repo's normal
+package manager.
 
 ## Copy
 

@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 
 const startedAtMs = Date.now();
 const tempDir = mkdtempSync(join(tmpdir(), "nodetrace-next-e2e-"));
+const timeoutMs = readPositiveInteger(process.env.NODETRACE_E2E_TIMEOUT_MS, 600000);
 const issues = [];
 let setupReceipt;
 let output = "";
@@ -15,8 +16,10 @@ try {
     cwd: process.cwd(),
     encoding: "utf8",
     env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+    timeout: timeoutMs,
   });
   output = [result.stdout, result.stderr].filter(Boolean).join("\n");
+  if (result.error) issues.push(`installer process error: ${result.error.message}`);
   if (result.status !== 0) issues.push(`installer failed: ${output.slice(-2000)}`);
   const receiptPath = join(tempDir, ".nodetrace", "setup-receipt.json");
   if (existsSync(receiptPath)) {
@@ -28,7 +31,9 @@ try {
     issues.push("missing setup receipt");
   }
 } finally {
-  rmSync(tempDir, { recursive: true, force: true });
+  if (issues.length === 0 && process.env.NODETRACE_KEEP_E2E_TARGET !== "1") {
+    rmSync(tempDir, { recursive: true, force: true });
+  }
 }
 
 const report = {
@@ -38,6 +43,8 @@ const report = {
   totalMs: Date.now() - startedAtMs,
   apiKeysRequired: false,
   framework: "next",
+  targetDir: issues.length > 0 || process.env.NODETRACE_KEEP_E2E_TARGET === "1" ? tempDir : undefined,
+  timeoutMs,
   phases: setupReceipt?.phases?.map((phase) => ({
     name: phase.name,
     ok: phase.ok,
@@ -91,4 +98,9 @@ function writeJson(path, value) {
   const parent = dirname(path);
   if (parent && parent !== "." && !existsSync(parent)) mkdirSync(parent, { recursive: true });
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function readPositiveInteger(value, fallback) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }

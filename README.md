@@ -127,6 +127,8 @@ Default `add` behavior:
 - patches `package.json` scripts and missing dependencies
 - runs install, no-key happy path, target smoke, and build when available
 - writes `.nodetrace/setup-receipt.json`
+- writes `.nodetrace/setup-log.txt` with every command, output tail, duration,
+  and timeout result
 
 Then run:
 
@@ -136,6 +138,13 @@ npm run nodetrace:dev
 
 Open `/nodetrace.html` for Vite or `/nodetrace` for Next. No API keys are
 required.
+
+If a target app has a slow registry, native package build, or locked-down
+network, the installer fails with a receipt instead of hanging forever. Agents
+can inspect `.nodetrace/setup-receipt.json` and `.nodetrace/setup-log.txt`, then
+retry with `NODETRACE_PHASE_TIMEOUT_MS=600000`, `--skip-install`, or the target
+repo's preferred package-manager command. npm installs use a target-local
+`.nodetrace/npm-cache` so a stale global npm cache cannot block onboarding.
 
 ## Visual Walkthrough
 

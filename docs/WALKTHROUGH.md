@@ -79,11 +79,16 @@ npm run trace-coach:sqlite
 
 The installer copies the trace UI, schema, demo entry, init/smoke scripts, and
 patches `package.json`. It then runs install, happy path, target smoke, and
-build when the target app has a build script. The receipt is:
+build when the target app has a build script. Each phase has a timeout and
+writes both status and command output:
 
 ```text
 .nodetrace/setup-receipt.json
+.nodetrace/setup-log.txt
 ```
+
+Coding agents should read both files when a target install fails. The receipt
+is the machine-readable status; the log is the command-by-command transcript.
 
 `nodetrace capture --plan <capture-plan.json>` is the reusable version for any
 repo. `nodetrace-capture` provides the same CLI as a dedicated binary, and

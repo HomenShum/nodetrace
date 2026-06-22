@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-22T02:37:27.887Z",
+  "generatedAt": "2026-06-22T05:15:58.415Z",
   "session": {
     "id": "trace-coach-noderoom-sqlite",
     "title": "Trace Coach: NodeRoom codebase trace",
@@ -229,8 +229,8 @@
             "    - panels",
             "      - Artifact.tsx"
           ],
-          "highlightStartLine": 1874,
-          "highlightEndLine": 1900,
+          "highlightStartLine": 2038,
+          "highlightEndLine": 2064,
           "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
@@ -240,8 +240,8 @@
         },
         "codeBlock": {
           "filePath": "src/ui/panels/Artifact.tsx",
-          "startLine": 1874,
-          "endLine": 1900,
+          "startLine": 2038,
+          "endLine": 2064,
           "snippet": "  useEffect(() => { const el = ref.current; if (el && nearBottom.current) el.scrollTop = el.scrollHeight; }, [log.length]);\n  const onScroll = () => { const el = ref.current; if (el) nearBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 60; };\n  const shown = log.slice(-40);\n  // The trace is a LOG, not the work surface. Collapse it by default so the artifact (the spreadsheet)\n  // reclaims the ~300px this strip otherwise holds -- the contract says the work surface carries focus.\n  // Auto-expand only when proposals are pending, since that is actionable review the host must not miss.\n  const open = openOverride ?? proposals.length > 0;\n  return (\n    <div className=\"r-trace\" data-testid=\"room-trace\" data-open={String(open)} data-noderoom-surface=\"workSurface.traceStrip\">\n      <div className=\"r-trace-head\">\n        <button\n          type=\"button\"\n          className=\"r-trace-toggle\"\n          aria-expanded={open}\n          aria-label={open ? \"Collapse room trace\" : \"Expand room trace\"}\n          onClick={() => setOpenOverride(!open)}\n        >\n          <ChevronRight size={13} className=\"r-trace-chev\" style={{ transform: open ? \"rotate(90deg)\" : \"none\" }} />\n          <History size={14} style={{ color: \"var(--text-muted)\" }} />\n          <span className=\"h-title\" style={{ fontSize: 12.5 }}>Room trace</span>\n          <span className=\"mono tiny faint\">{log.length} events</span>\n          {!open && proposals.length > 0 && <span className=\"r-trace-badge\">{proposals.length} to review</span>}\n        </button>\n        <span className=\"grow\" />\n        {run && <span className=\"r-trace-tele\" title={`${run.steps} steps · ${run.inputTokens.toLocaleString()} in + ${run.outputTokens.toLocaleString()} out tokens · ${run.ms}ms`}>{run.model} · {run.toolCalls} tools · ${run.costUsd.toFixed(3)}</span>}\n        {host && proposals.length > 1 && <button className=\"r-mini-btn primary\" disabled={acceptingAll} onClick={() => void acceptAll()}><Check size={12} /> Accept all</button>}\n      </div>"
         }
       },
@@ -280,8 +280,8 @@
             "    - panels",
             "      - TraceSurface.tsx"
           ],
-          "highlightStartLine": 15,
-          "highlightEndLine": 47,
+          "highlightStartLine": 16,
+          "highlightEndLine": 48,
           "captureKind": "actual-code-browser-shiki"
         },
         "mapCapture": {
@@ -291,8 +291,8 @@
         },
         "codeBlock": {
           "filePath": "src/ui/panels/TraceSurface.tsx",
-          "startLine": 15,
-          "endLine": 47,
+          "startLine": 16,
+          "endLine": 48,
           "snippet": "type DetailTab = \"overview\" | \"steps\" | \"flow\" | \"evidence\" | \"raw\";\n\n/** Capture a source into the Trace tab. Two lanes: Web (Firecrawl screenshot + extract) and SEC\n *  (EDGAR data API — authoritative facts by ticker/concept). The persisted record joins the list. */\nfunction CaptureForm({ roomId, onCapture, onSec }: {\n  roomId: string;\n  onCapture: (roomId: string, url: string, goal: string) => Promise<{ ok: boolean; error?: string }>;\n  onSec: (roomId: string, company: string, concept: string) => Promise<{ ok: boolean; error?: string }>;\n}) {\n  const [mode, setMode] = useState<\"web\" | \"sec\">(\"web\");\n  const [url, setUrl] = useState(\"\");\n  const [goal, setGoal] = useState(\"\");\n  const [company, setCompany] = useState(\"\");\n  const [concept, setConcept] = useState(\"\");\n  const [busy, setBusy] = useState(false);\n  const [err, setErr] = useState<string | null>(null);\n  const submit = async (e: FormEvent) => {\n    e.preventDefault();\n    if (busy) return;\n    const ready = mode === \"web\" ? url.trim() : company.trim();\n    if (!ready) { setErr(\"enter a \" + (mode === \"web\" ? \"URL\" : \"ticker\")); return; }\n    setBusy(true); setErr(null);\n    try {\n      const r = mode === \"web\"\n        ? await onCapture(roomId, url.trim(), goal.trim() || \"extract the key figures\")\n        : await onSec(roomId, company.trim(), concept.trim() || \"revenue\");\n      if (!r.ok) setErr(r.error ?? \"failed\");\n      else { setUrl(\"\"); setGoal(\"\"); setCompany(\"\"); setConcept(\"\"); }\n    } catch (e2) {\n      setErr(e2 instanceof Error ? e2.message : String(e2));\n    } finally {\n      setBusy(false);\n    }"
         }
       },
