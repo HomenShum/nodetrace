@@ -9,6 +9,7 @@ to NodeAgent's agent architecture. Bring your own agent, tools, queue, database,
 or model provider.
 
 Agent-trace injection guide: [`docs/AGENT_TRACE_ADOPTION.md`](docs/AGENT_TRACE_ADOPTION.md).
+Workpaper standard: [`docs/TRACE_WORKPAPER_STANDARD.md`](docs/TRACE_WORKPAPER_STANDARD.md).
 
 [Visual walkthrough](docs/WALKTHROUGH.md) - [Porting guide](docs/PORTING.md)
 
@@ -177,6 +178,9 @@ NodeTrace follows the same safety shape as the NodeRoom Trace Lens:
 - `Builder` tabs and code ownership only appear when `builderCapable` is server verified.
 - `Business proof` shows source/evidence cards and confidence.
 - `Runtime trace` shows bounded frame/tool/run events.
+- Runtime rows may carry optional workpaper refs and receipt hashes, including
+  `traceId`, `stepId`, `inputRefs`, `outputRefs`, evidence refs, mutation refs,
+  approval refs, eval refs, and context/tool/payload hashes.
 - `Code ownership` stays locked until a privileged server route supplies it.
 
 Use either attribute on clickable surfaces:

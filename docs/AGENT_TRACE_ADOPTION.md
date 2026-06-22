@@ -24,6 +24,9 @@ Then wire our agent trace data into NodeTraceState:
 - trace_events: every agent step, tool call, retry, browser action, scheduler event, and receipt
 - trace_proofs: source-backed business or QA evidence cards
 - trace_code_ownership: Builder-only ownership served by a privileged server route
+- RuntimeTraceRow.traceId / stepId: stable workpaper ids from your runtime
+- RuntimeTraceRow.inputRefs / outputRefs: opaque refs for context, sources, cells, artifacts, and tool results
+- RuntimeTraceRow.receiptHashes: args/result/payload/context hashes, never raw secrets
 - coach.sourceView: actual source screenshot for the active code section
 - coach.uiCapture: actual running-app screenshot with selector and DOMRect
 - coach.mapCapture: codebase minimap backed by a graph JSON file, compatible with an Understand Anything export

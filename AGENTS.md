@@ -39,6 +39,7 @@ Rules:
 - Builder mode must remain gated by a server-verified `builderCapable` flag.
 - Support `data-nodetrace-surface` and the NodeRoom-compatible `data-noderoom-surface`.
 - Keep the SQLite schema generic so any app can insert trace sessions, surfaces, proofs, and events.
+- Keep NodeAgent-style workpaper fields optional and portable: `traceId`, `stepId`, refs, and receipt hashes are useful, but NodeTrace must not require a specific agent runtime.
 - Keep `bin/nodetrace.mjs add` fully automatic: copy files, patch package scripts, install deps, run happy path, run smoke, run build when available, and write `.nodetrace/setup-receipt.json`.
 - Keep Trace Coach instructions coding-agent friendly: explicit commands, expected output files, no hidden API keys, and a visual result a new project can compare against.
 - Keep real capture proof mandatory by default. Only use generated source/UI stand-ins with an explicit `--allow-generated-captures` fallback for local debugging, never for public docs or release proof.

@@ -16,6 +16,7 @@ create table if not exists trace_surfaces (
 create table if not exists trace_proofs (
   id text primary key,
   session_id text not null references trace_sessions(id) on delete cascade,
+  trace_id text,
   surface_id text not null references trace_surfaces(id) on delete cascade,
   artifact_id text,
   element_id text,
@@ -31,6 +32,8 @@ create table if not exists trace_proofs (
 create table if not exists trace_events (
   id text primary key,
   session_id text not null references trace_sessions(id) on delete cascade,
+  trace_id text,
+  step_id text,
   surface_id text not null references trace_surfaces(id) on delete cascade,
   artifact_id text,
   element_id text,
@@ -39,6 +42,13 @@ create table if not exists trace_events (
   status text not null,
   summary text not null,
   duration_ms integer not null,
+  input_refs_json text,
+  output_refs_json text,
+  evidence_refs_json text,
+  mutation_refs_json text,
+  approval_refs_json text,
+  eval_ref_json text,
+  receipt_hashes_json text,
   created_at text not null
 );
 

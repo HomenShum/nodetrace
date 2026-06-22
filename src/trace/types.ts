@@ -16,6 +16,7 @@ export interface SurfaceHit {
 
 export interface TraceProof {
   id: string;
+  traceId?: string;
   surfaceId: string;
   artifactId?: string;
   elementId?: string;
@@ -27,8 +28,19 @@ export interface TraceProof {
   detail: string;
 }
 
+export interface TraceWorkpaperRef {
+  refId: string;
+  kind: string;
+  label?: string;
+  uri?: string;
+  hash?: string;
+  redacted?: boolean;
+}
+
 export interface RuntimeTraceRow {
   id: string;
+  traceId?: string;
+  stepId?: string;
   surfaceId: string;
   artifactId?: string;
   elementId?: string;
@@ -38,6 +50,18 @@ export interface RuntimeTraceRow {
   summary: string;
   durationMs: number;
   createdAt?: string;
+  inputRefs?: TraceWorkpaperRef[];
+  outputRefs?: TraceWorkpaperRef[];
+  evidenceRefs?: TraceWorkpaperRef[];
+  mutationRefs?: TraceWorkpaperRef[];
+  approvalRefs?: TraceWorkpaperRef[];
+  evalRef?: TraceWorkpaperRef;
+  receiptHashes?: {
+    argsHash?: string;
+    resultHash?: string;
+    payloadHash?: string;
+    contextPackHash?: string;
+  };
 }
 
 export interface CodeOwnershipReceipt {
