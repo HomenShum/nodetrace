@@ -101,6 +101,7 @@ Separate-verifier and no-proof-no-claim are enforced in code, not by convention:
   - *Bounded reads.* The public client window is capped at the last 6 rows (`.slice(-6).reverse()`), asserted by [`scripts/agent-trace-scale-smoke.mjs`](scripts/agent-trace-scale-smoke.mjs) even at 125 stored rows.
   - *Timeout / no hang.* Installer phases honor `NODETRACE_PHASE_TIMEOUT_MS` and fail with a receipt instead of blocking ([`README.md`](README.md)); next-e2e ran under a 600 000 ms budget ([`docs/eval/nodetrace-next-e2e-smoke.json`](docs/eval/nodetrace-next-e2e-smoke.json)).
   - *Least-privilege data.* Public state holds only opaque surface ids, labels, proof cards, and bounded rows — never file paths, query/mutation names, secrets, or raw prompts ([`AGENTS.md`](AGENTS.md) rules).
+- **PROVE-BEFORE-CLAIM** (agent-side gate) — never assert done/pass/fixed/blocked/absent/"root cause" from a *proxy* (an affordance, a keyword/template echo, a rendered shell, or a prior-based hypothesis); name the artifact that proves it and check THAT, independent-confirm anything that "looks done", and treat no gate as real until the autonomous path is tried. Canonical gate + observed failure signals: https://github.com/HomenShum/noderl/blob/main/spec/prove-before-claim.md
 
 ---
 
